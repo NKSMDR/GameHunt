@@ -1,0 +1,194 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ game.name }} - GAMEXHUNT</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'homecss/styles.css' %}">
+</head>
+
+<body>
+    <!-- Navigation Bar (kept consistent with home page) -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+                <img src="{% static 'GameImages/ghost_of_tsushima/logo2.png' %}" alt="Logo" style="max-height: 40px;" class="me-2">
+                <span style="font-size: 1.2rem; color: yellowgreen; font-family: 'Press Start 2P', cursive;">GAMEXHUNT</span>
+            </a>
+            <!-- Rest of navbar remains the same -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="#">Games</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Categories</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Deals</a></li>
+                </ul>
+                <form class="d-flex me-3">
+                    <input class="form-control me-2" type="search" placeholder="Search games...">
+                    <button class="btn btn-outline-light" type="submit"><i class="fas fa-search"></i></button>
+                </form>
+                <div class="d-flex">
+                    <a href="#" class="btn btn-outline-light me-2"><i class="fas fa-shopping-cart"></i></a>
+                    <a href="#" class="btn btn-primary"><i class="fas fa-user me-2"></i>Login</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Game Detail Section with retro styling -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <!-- Left Column - Game Media -->
+                <div class="col-lg-8">
+                    <!-- Main Video/Image Container with retro border -->
+                    <div class="card game-card mb-4" style="height: 500px; border: 4px solid #0fa; box-shadow: 0 0 10px #0fa;">
+                        <img src="{{ game.image_url }}" class="card-img-top" alt="{{ game.name }}">
+                        <div class="video-container">
+                            <iframe 
+                                src="{{ game.video_url }}?autoplay=1&mute=1&controls=1&loop=1&playlist={{ game.video_id }}&playsinline=1&vq=hd1080"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                    </div>
+
+                    <!-- Game Description with retro styling -->
+                    <div class="card bg-dark text-light p-4 mb-4" style="border: 2px solid #0fa; box-shadow: 0 0 5px #0fa;">
+                        <h4 class="mb-3" style="font-family: 'Press Start 2P', cursive; color: #fff; text-shadow: 0 0 2px #fff, 0 0 4px #0fa, 0 0 6px #0fa;">About This Game</h4>
+                        <p>{{ game.description|default:"No description available." }}</p>
+                        
+                        <!-- Game Features with retro styling -->
+                        <h5 class="mt-4 mb-3" style="font-family: 'Press Start 2P', cursive; color: #fff; text-shadow: 0 0 2px #fff, 0 0 4px #0fa, 0 0 6px #0fa;">Key Features</h5>
+                        <ul class="retro-list">
+                            {% for feature in game.features.all %}
+                            <li>{{ feature.description }}</li>
+                            {% empty %}
+                            <li>Features not available</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <!-- System Requirements with retro styling -->
+                    <div class="card bg-dark text-light p-4" style="border: 2px solid #0fa; box-shadow: 0 0 5px #0fa;">
+                        <h4 class="mb-3" style="font-family: 'Press Start 2P', cursive; color: #fff; text-shadow: 0 0 2px #fff, 0 0 4px #0fa, 0 0 6px #0fa;">System Requirements</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 style="font-family: 'Press Start 2P', cursive; color: yellowgreen;">Minimum:</h5>
+                                {{ game.min_requirements|default:"Not specified"|linebreaks }}
+                            </div>
+                            <div class="col-md-6">
+                                <h5 style="font-family: 'Press Start 2P', cursive; color: yellowgreen;">Recommended:</h5>
+                                {{ game.recommended_requirements|default:"Not specified"|linebreaks }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column - Game Info and Purchase with retro styling -->
+                <div class="col-lg-4">
+                    <div class="card bg-dark text-light p-4 sticky-top" style="top: 20px; border: 4px solid #0fa; box-shadow: 0 0 10px #0fa;">
+                        <h2 class="mb-3" style="font-family: 'Press Start 2P', cursive; color: #fff; text-shadow: 0 0 2px #fff, 0 0 4px #0fa, 0 0 6px #0fa;">{{ game.name }}</h2>
+                        
+                        <!-- Game Metadata with retro badges -->
+                        <div class="mb-4">
+                            <span class="badge bg-primary me-2" style="border: 1px solid #0fa;">{{ game.category }}</span>
+                            <span class="badge bg-success me-2" style="border: 1px solid #0fa;">{{ game.developer }}</span>
+                            <span class="badge bg-info" style="border: 1px solid #0fa;">Released: {{ game.release_date }}</span>
+                        </div>
+
+                        <!-- Rating with retro styling -->
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <i class="fas fa-star text-warning"></i>
+                                    <span class="ms-1" style="font-family: 'Press Start 2P', cursive;">{{ game.rating|default:"N/A" }}/5</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Price and Purchase with retro styling -->
+                        <div class="mb-4">
+                            {% if game.discount %}
+                            <div class="text-decoration-line-through text-muted" style="font-family: 'Press Start 2P', cursive;">${{ game.original_price }}</div>
+                            <div class="h2 text-success mb-3" style="font-family: 'Press Start 2P', cursive;">${{ game.price }} 
+                                <span class="badge bg-danger" style="border: 1px solid #0fa;">-{{ game.discount }}%</span>
+                            </div>
+                            {% else %}
+                            <div class="h2 mb-3" style="font-family: 'Press Start 2P', cursive;">${{ game.price }}</div>
+                            {% endif %}
+
+                            <button class="btn btn-primary btn-lg w-100 mb-2" style="border: 2px solid #0fa; box-shadow: 0 0 5px #0fa;">
+                                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                            </button>
+                            <button class="btn btn-outline-light btn-lg w-100" style="border: 2px solid #0fa; box-shadow: 0 0 5px #0fa;">
+                                <i class="fas fa-heart me-2"></i>Add to Wishlist
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Similar Games Section with retro styling -->
+    <section class="py-5 bg-dark">
+        <div class="container">
+            <h3 class="text-center mb-4" style="font-family: 'Press Start 2P', cursive; color: #fff; text-shadow: 0 0 2px #fff, 0 0 4px #0fa, 0 0 6px #0fa;">
+                Similar Games You Might Like
+            </h3>
+            <div class="row g-4">
+                {% for related_game in related_games|slice:":4" %}
+                <div class="col-md-3">
+                    <div class="card game-card" style="border: 2px solid #0fa; box-shadow: 0 0 5px #0fa;">
+                        <img src="{{ related_game.image_url }}" class="card-img-top" alt="{{ related_game.name }}">
+                        <div class="info-strip" style="font-family: 'Press Start 2P', cursive;">
+                            <h5>{{ related_game.name }}</h5>
+                            <span>${{ related_game.price }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer remains the same as home page -->
+    <footer class="bg-dark text-light py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>About GameStore</h5>
+                    <p>Your one-stop destination for all gaming needs.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light">About Us</a></li>
+                        <li><a href="#" class="text-light">Contact</a></li>
+                        <li><a href="#" class="text-light">Support</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Newsletter</h5>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Enter your email" style="font-size: 14px;">
+                        <button class="btn btn-primary">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer content remains the same -->
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/scripts.js' %}"></script>
+</body>
+</html>

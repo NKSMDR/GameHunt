@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+{% load static%}
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GAMEXHUNT</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{% static 'homecss/styles.css' %}" />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+          <img
+            src="/static/GameImages/ghost_of_tsushima/logo2.png"
+            alt="Logo"
+            style="max-height: 40px"
+            class="me-2"
+          />
+          <span
+            style="
+              font-size: 1.2rem;
+              color: yellowgreen;
+              font-family: 'Press Start 2P', cursive;
+            "
+            >GAMEXHUNT</span
+          >
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link active" href="#">Home</a>
+            </li>
+            <li class="nav-item"><a class="nav-link" href="#">Games</a></li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Categories</a>
+            </li>
+            <li class="nav-item"><a class="nav-link" href="#">Deals</a></li>
+          </ul>
+          <form class="d-flex me-3">
+            <input
+              class="form-control me-2"
+              type="search"
+              placeholder="Search games..."
+            />
+            <button class="btn btn-outline-light" type="submit">
+              <i class="fas fa-search"></i>
+            </button>
+          </form>
+          <div class="d-flex">
+            <a href="#" class="btn btn-outline-light me-2"
+              ><i class="fas fa-shopping-cart"></i
+            ></a>
+            <a href="#" class="btn btn-primary"
+              ><i class="fas fa-user me-2"></i>Login</a
+            >
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!--hero section-->
+    <section class="hero-section">
+      <div class="container text-center">
+        <h1 class="display-4">Welcome to GAMEXHUNT</h1>
+        <p class="lead">Discover the latest and greatest games</p>
+        <a href="#" class="btn btn-primary btn-lg">Browse Games</a>
+      </div>
+    </section>
+
+    <!--featured Games-->
+    <section class="py-5">
+      <div class="container">
+        <h2
+          class="text-center mb-4"
+          style="
+            color: #fff;
+            text-shadow: 0 0 2px #fff, 0 0 4px #0fa, 0 0 6px #0fa;
+            font-weight: bold;
+            transition: text-shadow 0.3s ease;
+          "
+          onmouseover="this.style.textShadow='0 0 10px #fff, 0 0 20px #fff, 0 0 30px #0fa, 0 0 40px #0fa, 0 0 70px #0fa'"
+          onmouseout="this.style.textShadow='0 0 2px #fff, 0 0 4px #0fa, 0 0 6px #0fa'"
+        >
+          Featured Games
+        </h2>
+
+      <!-- First Row (1-4) -->
+      <div class="row g-4 mb-4">
+          {% for game in featured_games|slice:":4" %}
+          <div class="col-md-3">
+              <div class="card game-card position-relative">
+                  <div class="media-container">
+                      <img src="{{ game.image_url }}" class="card-img-top" alt="{{ game.name }}">
+                      <div class="video-container">
+                          <iframe 
+                              src="{{ game.video_url }}?autoplay=1&mute=1&controls=0&loop=1&playlist={{ game.video_id }}&playsinline=1&vq=hd1080"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowfullscreen>
+                          </iframe>
+                      </div>
+                  </div>
+                  <button class="btn btn-light btn-sm unmute-btn">🔊</button>
+                  <div class="game-name-container">
+                      <a href="{% url 'game_detail' game.id %}" class="stretched-link"></a>
+                      <h5 class="game-title">{{ game.name }}</h5>
+                      <span class="game-price">${{ game.price }}</span>
+                  </div>
+              </div>
+          </div>
+          {% endfor %}
+      </div>
+
+      <!-- Second Row (5-8) -->
+      <div class="row g-4 mb-4">
+          {% for game in featured_games|slice:"4:8" %}
+          <div class="col-md-3">
+              <div class="card game-card position-relative">
+                  <div class="media-container">
+                      <img src="{{ game.image_url }}" class="card-img-top" alt="{{ game.name }}">
+                      <div class="video-container">
+                          <iframe 
+                              src="{{ game.video_url }}?autoplay=1&mute=1&controls=0&loop=1&playlist={{ game.video_id }}&playsinline=1&vq=hd1080"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowfullscreen>
+                          </iframe>
+                      </div>
+                  </div>
+                  <button class="btn btn-light btn-sm unmute-btn">🔊</button>
+                  <div class="game-name-container">
+                      <a href="{% url 'game_detail' game.id %}" class="stretched-link"></a>
+                      <h5 class="game-title">{{ game.name }}</h5>
+                      <span class="game-price">${{ game.price }}</span>
+                  </div>
+              </div>
+          </div>
+          {% endfor %}
+      </div>
+  </div>
+</section>
+
+    <!-- Categories Section -->
+    <section class="py-5 bg-light">
+      <div class="container">
+        <h2 class="text-center mb-4" style="color: black">
+          Browse by Category
+        </h2>
+        <div class="row g-4">
+          <div class="col-md-2">
+            <div
+              class="card text-center hover-effect"
+              aria-label="Browse Action Games"
+            >
+              <div class="card-body hover-effect">
+                <i class="fas fa-gamepad fa-2x mb-3"></i>
+                <h6>Action</h6>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div
+              class="card text-center hover-effect"
+              aria-label="Browse Action Games"
+            >
+              <div class="card-body hover-effect">
+                <i class="fas fa-dragon fa-2x mb-3"></i>
+                <h6>RPG</h6>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="card text-center hover-effect">
+              <div class="card-body hover-effect">
+                <i class="fas fa-football-ball fa-2x mb-3"></i>
+                <h6>Sports</h6>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="card text-center hover-effect">
+              <div class="card-body hover-effect">
+                <i class="fas fa-chess fa-2x mb-3"></i>
+                <h6>Strategy</h6>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="card text-center hover-effect">
+              <div class="card-body hover-effect">
+                <i class="fas fa-car fa-2x mb-3"></i>
+                <h6>Racing</h6>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="card text-center hover-effect">
+              <div class="card-body hover-effect">
+                <i class="fas fa-ghost fa-2x mb-3"></i>
+                <h6>Horror</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+ <!--Trending section-->
+    <section class="py-5">
+      <div class="container">
+        <h2
+          class="text-center mb-4"
+          style="
+            color: #fff;
+            text-shadow: 0 0 2px #fff, 0 0 4px #0fa, 0 0 6px #0fa;
+            font-weight: bold;
+            transition: text-shadow 0.3s ease;
+          "
+          onmouseover="this.style.textShadow='0 0 10px #fff, 0 0 20px #fff, 0 0 30px #0fa, 0 0 40px #0fa, 0 0 70px #0fa'"
+          onmouseout="this.style.textShadow='0 0 2px #fff, 0 0 4px #0fa, 0 0 6px #0fa'"
+        >
+          Trending Now
+        </h2>
+
+        <div class="row g-4 mb-4 position-relative">
+          <button class="carousel-control-prev" type="button" id="prevBtn">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+
+          <div class="games-wrapper overflow-visible">
+            <div class="games-container d-flex transition-all">
+              {% for game in trending_games %}
+              <div class="col-md-3 flex-shrink-0">
+                <div class="card game-card position-relative">
+                  <img
+                    src="{{ game.image_url }}"
+                    class="card-img-top"
+                    alt="Game"
+                  />
+                  <div class="video-container">
+                    <iframe
+                      src="{{ game.video_url }}?autoplay=1&mute=1&controls=0&loop=1&playlist={{ game.video_id }}&playsinline=1&vq=hd1080"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowfullscreen
+                    >
+                    </iframe>
+                    <button class="btn btn-light btn-sm unmute-btn">🔊</button>
+                  </div>
+                  <div class="card-body game-name-container">
+                    <a href="{% url 'game_detail' game.id %}" class="stretched-link"></a>
+                    <h5 class="game-title">{{ game.name }}</h5>
+                    <span class="game-price">${{ game.price }}</span>
+                </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <button class="carousel-control-next" type="button" id="nextBtn">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+
+        <script>
+          document.addEventListener('DOMContentLoaded', function() {
+              const container = document.querySelector('.games-container');
+              const prevBtn = document.getElementById('prevBtn');
+              const nextBtn = document.getElementById('nextBtn');
+              const gameWidth = document.querySelector('.col-md-3').offsetWidth;
+              let currentPosition = 0;
+              const totalGames = {{ trending_games|length }};
+              const maxPosition = totalGames - 4; // Show 4 games at once
+
+              function updateButtons() {
+                  prevBtn.disabled = currentPosition <= 0;
+                  nextBtn.disabled = currentPosition >= maxPosition;
+              }
+
+              prevBtn.addEventListener('click', () => {
+                  if (currentPosition > 0) {
+                      currentPosition--;
+                      container.style.transform = `translateX(-${currentPosition * gameWidth}px)`;
+                      updateButtons();
+                  }
+              });
+
+              nextBtn.addEventListener('click', () => {
+                  if (currentPosition < maxPosition) {
+                      currentPosition++;
+                      container.style.transform = `translateX(-${currentPosition * gameWidth}px)`;
+                      updateButtons();
+                  }
+              });
+
+              // Initial button state
+              updateButtons();
+          });
+        </script>
+      </div>
+    </section>
+
+
+
+
+    <!-- 3 Categories Section -->
+    <section class="game-lists-section py-5">
+      <div class="container">
+        <div class="row">
+          <!-- New Released Games -->
+          <div class="col-md-4">
+            <div class="game-list-container" data-category="new">
+              <h3
+                class="text-center mb-3"
+                style="
+                  color: #fff;
+                  text-shadow: 0 0 2px #fff, 0 0 4px #0fa, 0 0 6px #0fa;
+                "
+              >
+                New Released
+                <span class="badge bg-danger ms-2 update-badge">NEW</span>
+              </h3>
+              <div class="list-controls">
+                <button
+                  class="btn btn-sm btn-outline-light sort-btn"
+                  data-sort="price"
+                >
+                  <i class="fas fa-sort-amount-down"></i> Price
+                </button>
+                <button
+                  class="btn btn-sm btn-outline-light sort-btn"
+                  data-sort="name"
+                >
+                  <i class="fas fa-sort-alpha-down"></i> Name
+                </button>
+              </div>
+              <div class="scrollable-list">
+                {% for game in new_released_games %}
+                <div
+                  class="game-list-item {% if game.is_new %}new-item{% endif %}"
+                  data-price="{{ game.price }}"
+                  data-name="{{ game.name }}"
+                >
+                  <a
+                    href="{% url 'game_detail' game.id %}"
+                    class="stretched-link"
+                  ></a>
+                  <div class="game-image">
+                    <img src="{{ game.image_url }}" alt="{{ game.name }}" />
+                    {% if game.discount %}
+                    <div class="discount-badge">-{{ game.discount }}%</div>
+                    {% endif %}
+                  </div>
+                  <div class="game-details">
+                    <h6>{{ game.name }}</h6>
+                    <div class="metadata">
+                      <span class="category-badge">{{ game.category }}</span>
+                      {% if game.rating %}
+                      <span class="rating">
+                        <i class="fas fa-star"></i> {{ game.rating }}
+                      </span>
+                      {% endif %}
+                    </div>
+                    <div class="price-container">
+                      {% if game.original_price %}
+                      <span class="original-price"
+                        >${{ game.original_price }}</span
+                      >
+                      {% endif %}
+                      <span class="price">${{ game.price }}</span>
+                    </div>
+                  </div>
+                  <button class="btn btn-sm btn-primary quick-view-btn">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </div>
+                {% endfor %}
+              </div>
+              <div class="list-footer">
+                <span class="items-count"
+                  >Showing <span class="count">0</span> items</span
+                >
+                <a href="#" class="view-all">View All</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Free Games -->
+          <div class="col-md-4">
+            <div class="game-list-container" data-category="free">
+              <h3
+                class="text-center mb-3"
+                style="
+                  color: #fff;
+                  text-shadow: 0 0 2px #fff, 0 0 4px #0fa, 0 0 6px #0fa;
+                "
+              >
+                Free Games
+                <span class="badge bg-success ms-2">FREE</span>
+              </h3>
+              <div class="list-controls">
+                <button
+                  class="btn btn-sm btn-outline-light sort-btn"
+                  data-sort="name"
+                >
+                  <i class="fas fa-sort-alpha-down"></i> Name
+                </button>
+                <button
+                  class="btn btn-sm btn-outline-light filter-btn"
+                  data-filter="limited"
+                >
+                  <i class="fas fa-clock"></i> Limited Time
+                </button>
+              </div>
+              <div class="scrollable-list">
+                {% for game in free_games %}
+                <div class="game-list-item" data-name="{{ game.name }}">
+                  <div class="game-image">
+                    <img src="{{ game.image_url }}" alt="{{ game.name }}" />
+                    {% if game.limited_time %}
+                    <div class="time-badge">Limited Time</div>
+                    {% endif %}
+                  </div>
+                  <div class="game-details">
+                    <h6>{{ game.name }}</h6>
+                    <div class="metadata">
+                      <span class="category-badge">{{ game.category }}</span>
+                      {% if game.rating %}
+                      <span class="rating">
+                        <i class="fas fa-star"></i> {{ game.rating }}
+                      </span>
+                      {% endif %}
+                    </div>
+                    <span class="price">Free</span>
+                  </div>
+                  <button class="btn btn-sm btn-success claim-btn">
+                    <i class="fas fa-gift"></i> Claim
+                  </button>
+                </div>
+                {% endfor %}
+              </div>
+              <div class="list-footer">
+                <span class="items-count"
+                  >Showing <span class="count">0</span> items</span
+                >
+                <a href="#" class="view-all">View All</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Popular Games -->
+          <div class="col-md-4">
+            <div class="game-list-container" data-category="popular">
+              <h3
+                class="text-center mb-3"
+                style="
+                  color: #fff;
+                  text-shadow: 0 0 2px #fff, 0 0 4px #0fa, 0 0 6px #0fa;
+                "
+              >
+                Popular Games
+                <span class="badge bg-warning ms-2">HOT</span>
+              </h3>
+              <div class="list-controls">
+                <button
+                  class="btn btn-sm btn-outline-light sort-btn"
+                  data-sort="rating"
+                >
+                  <i class="fas fa-star"></i> Rating
+                </button>
+                <button
+                  class="btn btn-sm btn-outline-light sort-btn"
+                  data-sort="price"
+                >
+                  <i class="fas fa-sort-amount-down"></i> Price
+                </button>
+              </div>
+              <div class="scrollable-list">
+                {% for game in popular_games %}
+                <div
+                  class="game-list-item"
+                  data-price="{{ game.price }}"
+                  data-rating="{{ game.rating }}"
+                  data-name="{{ game.name }}"
+                >
+                  <div class="game-image">
+                    <img src="{{ game.image_url }}" alt="{{ game.name }}" />
+                    {% if game.trending %}
+                    <div class="trending-badge">Trending</div>
+                    {% endif %}
+                  </div>
+                  <div class="game-details">
+                    <h6>{{ game.name }}</h6>
+                    <div class="metadata">
+                      <span class="category-badge">{{ game.category }}</span>
+                      <span class="rating">
+                        <i class="fas fa-star"></i> {{ game.rating }}
+                      </span>
+                    </div>
+                    <span class="price">${{ game.price }}</span>
+                  </div>
+                  <button class="btn btn-sm btn-primary quick-view-btn">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </div>
+                {% endfor %}
+              </div>
+              <div class="list-footer">
+                <span class="items-count"
+                  >Showing <span class="count">0</span> items</span
+                >
+                <a href="#" class="view-all">View All</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick View Modal -->
+      <div class="modal fade" id="quickViewModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content bg-dark text-light">
+            <div class="modal-header border-secondary">
+              <h5 class="modal-title">Game Details</h5>
+              <button
+                type="button"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <!-- Content will be dynamically populated -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4">
+            <h5>About GameStore</h5>
+            <p>Your one-stop destination for all gaming needs.</p>
+          </div>
+          <div class="col-md-4">
+            <h5>Quick Links</h5>
+            <ul class="list-unstyled">
+              <li><a href="#" class="text-light">About Us</a></li>
+              <li><a href="#" class="text-light">Contact</a></li>
+              <li><a href="#" class="text-light">Support</a></li>
+            </ul>
+          </div>
+          <div class="col-md-4">
+            <h5>Newsletter</h5>
+            <div class="input-group">
+              <input
+                type="email"
+                class="form-control"
+                placeholder="Enter your email"
+                style="font-size: 14px"
+              />
+              <button class="btn btn-primary">Subscribe</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'homejs/scripts.js' %}"></script>
+  </body>
+</html>
