@@ -11,6 +11,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // Store the original video URL
         const originalSrc = iframe.src;
 
+        // Add enablejsapi=1 to the URL if not already present
+        const apiEnabledSrc = originalSrc.includes('enablejsapi=1') 
+        ? originalSrc 
+        : (originalSrc + (originalSrc.includes('?') ? '&' : '?') + 'enablejsapi=1');
+    
+
         card.addEventListener('mouseenter', () => {
             hoverTimer = setTimeout(() => {
                 card.classList.add('show-video');
@@ -35,11 +41,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (unmuteButton) {
             unmuteButton.addEventListener('click', (event) => {
-                event.stopPropagation(); // Prevent link activation 
-                if (iframe) {
-                    iframe.src = iframe.src.replace('&mute=1', '');
-                    unmuteButton.style.display = 'none';
-                }
+                event.stopPropagation();
+                
+                // Use postMessage to interact with the YouTube iframe
+                const player = iframe.contentWindow;
+                
+                // Unmute the video
+                player.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+                
+                // Continue playing from current position
+                player.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                
+                // Hide unmute button
+                unmuteButton.style.display = 'none';
             });
         }
     });

@@ -1,154 +1,425 @@
 {% load static %}
+
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>GAMEXHUNT - {{ game.name }}</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="{% static 'homecss/styles.css' %}" />
-  </head>
-  <body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ game.name }} - Game Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #1a1a1d;
+            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        .game-card {
+            background: linear-gradient(145deg, #1e1e2f, #232334);
+            border: none;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            position: relative;
+            overflow: hidden;
+            margin: 10px;
+            min-width: 300px;
+            aspect-ratio: 4/3;
+        }
+
+        .media-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .card-img-top {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.3s;
+        }
+
+        .video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .video-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .game-name-container {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 20%;
+            padding: 12px 15px;
+            background: rgba(0, 0, 0, 0.9);
+            border-top: 2px solid #ff006e;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .game-title {
+            margin: 0;
+            font-size: 0.8rem;
+            color: #ff006e;
+            position: relative;
+        }
+
+        .game-price {
+            font-size: 0.8rem;
+            color: #0fa;
+        }
+
+        .unmute-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            display: block;
+        }
+
+        .game-card .unmute-btn {
+            bottom: calc(20% + 10px);
+            top: auto;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 6px 20px rgba(255, 0, 110, 0.8);
+        }
+
+        .game-details-media {
+            position: relative;
+            width: 100%;
+            height: 500px;
+        }
+
+        .game-details-media img,
+        .game-details-media iframe {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .section-title {
+            color: #fff;
+            text-shadow: 0 0 2px #fff, 0 0 4px #0fa, 0 0 6px #0fa;
+            font-weight: bold;
+            transition: text-shadow 0.3s ease;
+        }
+
+        .section-title:hover {
+            text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #0fa, 0 0 40px #0fa, 0 0 70px #0fa;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark">
-      <!-- Keep your existing navbar content here -->
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="/static/GameImages/ghost_of_tsushima/logo2.png" alt="Logo" style="max-height: 40px" class="me-2">
+                <span style="font-size: 1.2rem; color: yellowgreen; font-family: 'Press Start 2P', cursive;">GAMEXHUNT</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Games</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Categories</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Deals</a></li>
+                </ul>
+                <form class="d-flex me-3">
+                    <input class="form-control me-2" type="search" placeholder="Search games...">
+                    <button class="btn btn-outline-light" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+                <div class="d-flex">
+                    <a href="#" class="btn btn-outline-light me-2"><i class="fas fa-shopping-cart"></i></a>
+                    <a href="#" class="btn btn-primary"><i class="fas fa-user me-2"></i>Login</a>
+                </div>
+            </div>
+        </div>
     </nav>
 
-    <!-- Game Detail Section -->
-    <section class="game-detail py-5">
-      <div class="container">
-        <div class="row g-5">
-          <!-- Media Column -->
-          <div class="col-md-8">
-            <div class="game-media-container">
-              <!-- Main Game Image -->
-              <img src="{{ game.image_url }}" class="img-fluid mb-4" alt="{{ game.name }}">
-
-              <!-- Video Container -->
-              <div class="video-container mt-4">
-                {% if game.video_id %}
-                <iframe 
-                  src="https://www.youtube.com/embed/{{ game.video_id }}?autoplay=1&mute=1&controls=0&loop=1"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowfullscreen>
-                </iframe>
-                <button class="btn btn-light btn-sm unmute-btn">🔊</button>
-                {% endif %}
-              </div>
-            </div>
-          </div>
-
-          <!-- Details Column -->
-          <div class="col-md-4">
-            <div class="game-info-container sticky-top">
-              <h1 class="game-title">{{ game.name }}</h1>
-              
-              <div class="metadata mb-4">
-                <span class="badge bg-primary">{{ game.category }}</span>
-                <span class="badge bg-secondary">{{ game.platform }}</span>
-                <span class="rating">
-                  <i class="fas fa-star"></i> {{ game.rating }}/5
-                </span>
-              </div>
-
-              <div class="price-section mb-4">
-                {% if game.discount %}
-                <span class="original-price">${{ game.original_price|floatformat:2 }}</span>
-                <span class="discount-badge bg-danger">-{{ game.discount }}%</span>
-                {% endif %}
-                <h2 class="current-price">${{ game.price|floatformat:2 }}</h2>
-              </div>
-
-              <div class="action-buttons mb-4">
-                <button class="btn btn-primary btn-lg w-100 mb-3">
-                  <i class="fas fa-shopping-cart"></i> Add to Cart
-                </button>
-                <button class="btn btn-outline-light btn-lg w-100">
-                  <i class="fas fa-heart"></i> Add to Wishlist
-                </button>
-              </div>
-
-              <div class="game-details">
-                <h3 class="mb-3">About This Game</h3>
-                <p class="game-description">{{ game.description }}</p>
-                
-                <div class="specs">
-                  <h4>Details</h4>
-                  <ul class="list-unstyled">
-                    <li><strong>Developer:</strong> {{ game.developer }}</li>
-                    <li><strong>Publisher:</strong> {{ game.publisher }}</li>
-                    <li><strong>Release Date:</strong> {{ game.release_date }}</li>
-                    <li><strong>Genre:</strong> {{ game.category }}</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
+    <div class="container">
+        <!-- Game Media Section -->
+        <div class="game-details-media mb-4">
+            {% if game.embed_url %}
+            <iframe 
+            src="{{ game.embed_url }}?autoplay=1&mute=1&controls=0&loop=1&playsinline=1&vq=hd1080&enablejsapi=1" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+        </iframe>
+            {% else %}
+                <img src="{{ game.image_url }}" alt="{{ game.name }}">
+            {% endif %}
         </div>
 
-        <!-- System Requirements Section -->
-        <section class="system-requirements mt-5">
-          <h3>System Requirements</h3>
-          <div class="row">
-            <div class="col-md-6">
-              <h5>Minimum Requirements</h5>
-              <pre class="requirements-text">{{ game.min_requirements }}</pre>
-            </div>
-            <div class="col-md-6">
-              <h5>Recommended Requirements</h5>
-              <pre class="requirements-text">{{ game.recommended_requirements }}</pre>
-            </div>
-          </div>
-        </section>
+        <!-- Game Info -->
+        <div class="row">
+            <div class="col-md-8">
+                <h1 class="section-title mb-4">{{ game.name }}</h1>
+                <div class="card bg-dark text-light mb-4">
+                    <div class="card-body">
+                        <h3 class="section-title">Game Description</h3>
+                        <p>{{ game.description }}</p>
 
-        <!-- Related Games -->
-        <section class="related-games mt-5">
-          <h3>You May Also Like</h3>
-          <div class="row g-4">
-            {% for game in related_games %}
-            <div class="col-md-3">
-              <div class="card game-card position-relative">
-                <img src="{{ game.image_url }}" class="card-img-top" alt="{{ game.name }}">
-                <div class="game-name-container">
-                  <a href="{% url 'game_detail' game.id %}" class="stretched-link"></a>
-                  <h5 class="game-title">{{ game.name }}</h5>
-                  <span class="game-price">${{ game.price|floatformat:2 }}</span>
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="card bg-secondary text-light">
+                                    <div class="card-body">
+                                        <h4 class="section-title">Minimum Requirements</h4>
+                                        {{ game.min_requirements|default:"No minimum requirements specified." }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-secondary text-light">
+                                    <div class="card-body">
+                                        <h4 class="section-title">Recommended Requirements</h4>
+                                        {{ game.recommended_requirements|default:"No recommended requirements specified." }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
-            {% endfor %}
-          </div>
-        </section>
-      </div>
-    </section>
 
-    <footer class="bg-dark text-light py-4">
-      <!-- Keep your existing footer content here -->
+            <div class="col-md-4">
+                <div class="card bg-dark text-light">
+                    <div class="card-body">
+                        <h3 class="section-title">Game Details</h3>
+                        <div class="mb-2">
+                            <strong>Category:</strong> 
+                            <span class="badge bg-primary">{{ game.get_category_display }}</span>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Developer:</strong> {{ game.developer|default:"N/A" }}
+                        </div>
+                        <div class="mb-2">
+                            <strong>Price:</strong> 
+                            <span class="game-price">${{ game.price }}</span>
+                            {% if game.original_price and game.discount %}
+                                <span class="text-muted ms-2" style="text-decoration: line-through;">
+                                    ${{ game.original_price }}
+                                </span>
+                                <span class="text-danger">(-{{ game.discount }}%)</span>
+                            {% endif %}
+                        </div>
+                        <div class="mb-2">
+                            <strong>Rating:</strong> 
+                            <span class="text-warning">
+                                <i class="fas fa-star"></i> 
+                                {{ game.rating|default:"N/A" }}/5 
+                                {% if game.reviews_count %}
+                                    ({{ game.reviews_count }} reviews)
+                                {% endif %}
+                            </span>
+                        </div>
+                        <button class="btn btn-primary w-100 mt-3">
+                            <i class="fas fa-cart-plus me-2"></i>Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Games Section -->
+        <div class="mt-5">
+            <h2 class="text-center mb-4" style="
+                color: #fff;
+                text-shadow: 0 0 2px #fff, 0 0 4px #0fa, 0 0 6px #0fa;
+                font-weight: bold;
+                font-family: 'Press Start 2P', cursive;
+                transition: text-shadow 0.3s ease;
+            "
+            onmouseover="this.style.textShadow='0 0 10px #fff, 0 0 20px #fff, 0 0 30px #0fa, 0 0 40px #0fa, 0 0 70px #0fa'"
+            onmouseout="this.style.textShadow='0 0 2px #fff, 0 0 4px #0fa, 0 0 6px #0fa'"
+            >
+            Related Games
+            </h2>
+            <div class="row g-4">
+                {% for game in related_games %}
+                <div class="col-md-3">
+                    <div class="card game-card position-relative">
+                        <div class="media-container">
+                            <img src="{{ game.image_url }}" class="card-img-top" alt="{{ game.name }}">
+                            <div class="video-container">
+                                <iframe 
+                                src="{{ game.video_url }}?autoplay=1&mute=1&controls=0&loop=1&playlist={{ game.video_id }}&playsinline=1&vq=hd1080&enablejsapi=1"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen>
+                            </iframe>
+                            </div>
+                        </div>
+                        <button class="btn btn-light btn-sm unmute-btn">🔊</button>
+                        <div class="game-name-container">
+                            <a href="{% url 'game_detail' game.id %}" class="stretched-link"></a>
+                            <h5 class="game-title">{{ game.name }}</h5>
+                            <span class="game-price">${{ game.price }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                    <p>No related games found.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5" style="font-family: 'Press Start 2P', cursive;">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>About GameStore</h5>
+                    <p>Your one-stop destination for all gaming needs.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light">About Us</a></li>
+                        <li><a href="#" class="text-light">Contact</a></li>
+                        <li><a href="#" class="text-light">Support</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Newsletter</h5>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Enter your email" style="font-size: 14px;">
+                        <button class="btn btn-primary">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static 'homejs/scripts.js' %}"></script>
-    
     <script>
-      // Unmute button functionality
-      document.querySelectorAll('.unmute-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
-          e.preventDefault();
-          const iframe = button.closest('.video-container').querySelector('iframe');
-          const src = iframe.src.replace('mute=1', 'mute=0');
-          iframe.src = src;
-          button.textContent = '🔇';
+        document.addEventListener('DOMContentLoaded', function() {
+            // Function to handle video hover and unmute
+            function setupVideoInteractions() {
+                const gameCards = document.querySelectorAll('.game-card');
+                const mainGameMedia = document.querySelector('.game-details-media');
+    
+                // Game Cards Video Interactions
+                gameCards.forEach(card => {
+                    const mediaContainer = card.querySelector('.media-container');
+                    const image = card.querySelector('.card-img-top');
+                    const videoContainer = card.querySelector('.video-container');
+                    const unmuteBtn = card.querySelector('.unmute-btn');
+                    const iframe = videoContainer.querySelector('iframe');
+    
+                    // Hover effect
+                    mediaContainer.addEventListener('mouseenter', () => {
+                        image.style.opacity = '0';
+                        videoContainer.style.opacity = '1';
+                        
+                        // Attempt to unmute and play
+                        try {
+                            const player = iframe.contentWindow;
+                            player.postMessage('{"event":"command","func":"unmute","args":""}', '*');
+                            player.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                        } catch(e) {
+                            console.error('Error interacting with iframe', e);
+                        }
+                    });
+    
+                    mediaContainer.addEventListener('mouseleave', () => {
+                        image.style.opacity = '1';
+                        videoContainer.style.opacity = '0';
+                        
+                        // Mute and pause
+                        try {
+                            const player = iframe.contentWindow;
+                            player.postMessage('{"event":"command","func":"mute","args":""}', '*');
+                            player.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                        } catch(e) {
+                            console.error('Error interacting with iframe', e);
+                        }
+                    });
+    
+                    // Unmute button functionality
+                    unmuteBtn.addEventListener('click', () => {
+                        try {
+                            const player = iframe.contentWindow;
+                            player.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+                            unmuteBtn.style.display = 'none';
+                        } catch(e) {
+                            console.error('Error unmuting', e);
+                        }
+                    });
+                });
+    
+                // Main Game Media Unmute Button
+                if (mainGameMedia) {
+                    const mainIframe = mainGameMedia.querySelector('iframe');
+                    const mainUnmuteBtn = document.createElement('button');
+                    mainUnmuteBtn.classList.add('btn', 'btn-light', 'btn-sm', 'unmute-btn');
+                    mainUnmuteBtn.textContent = '🔊';
+                    mainUnmuteBtn.style.display = 'block';
+                    mainUnmuteBtn.style.position = 'absolute';
+                    mainUnmuteBtn.style.top = '10px';
+                    mainUnmuteBtn.style.right = '10px';
+                    mainUnmuteBtn.style.zIndex = '10';
+    
+                    mainGameMedia.style.position = 'relative';
+                    mainGameMedia.appendChild(mainUnmuteBtn);
+    
+                    mainUnmuteBtn.addEventListener('click', () => {
+                        try {
+                            const player = mainIframe.contentWindow;
+                            player.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+                            mainUnmuteBtn.style.display = 'none';
+                        } catch(e) {
+                            console.error('Error unmuting', e);
+                        }
+                    });
+                }
+            }
+    
+            // Modify iframes to enable JavaScript API
+            function updateIframeUrls() {
+                const iframes = document.querySelectorAll('iframe');
+                iframes.forEach(iframe => {
+                    let src = iframe.getAttribute('src');
+                    if (src && !src.includes('enablejsapi=1')) {
+                        src += (src.includes('?') ? '&' : '?') + 'enablejsapi=1';
+                        iframe.setAttribute('src', src);
+                    }
+                });
+            }
+    
+            updateIframeUrls();
+            setupVideoInteractions();
         });
-      });
     </script>
-  </body>
-</html> n
+</body>
+</html>

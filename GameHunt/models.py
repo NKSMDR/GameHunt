@@ -2,6 +2,7 @@ from django.db import models
 from urllib.parse import urlparse, parse_qs
 from django.core.exceptions import ValidationError
 
+
 class Game(models.Model):
     SECTION_CHOICE = [
         ('featured', 'Featured'),
