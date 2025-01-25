@@ -20,7 +20,7 @@ def home(request):
 def game_detail(request, game_id):
     # Get the main game
     game = get_object_or_404(Game, id=game_id)
-    
+     
     # Get related games (games in the same section)
     related_games = Game.objects.filter(
         section=game.section
