@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.contrib import messages
 import requests
 from .models import Game
+from decimal import Decimal
 
 @admin.register(Game)
 class GameAdmin(admin.ModelAdmin):
@@ -139,14 +140,16 @@ class GameAdmin(admin.ModelAdmin):
 
     def formatted_price(self, obj):
         if obj.discount:
+            original_price_str = f"{obj.original_price:.2f}"
+            discounted_price_str = f"{obj.price:.2f}"
             return format_html(
                 '<span style="text-decoration: line-through; color: #999;">${}</span>'
                 '<br>'
-                '<span style="color: #28a745;">${:.2f}</span>',
-                obj.original_price,
-                float(obj.price)
+                '<span style="color: #28a745;">${}</span>',
+                original_price_str,
+                discounted_price_str
             )
-        return f'${obj.price}'
+        return f"${obj.price:.2f}"
     formatted_price.short_description = 'Price'
 
     def rating_display(self, obj):
@@ -202,7 +205,9 @@ class GameAdmin(admin.ModelAdmin):
         if obj.discount and not obj.original_price:
             obj.original_price = obj.price
         if obj.original_price and obj.discount:
-            obj.price = obj.original_price * (1 - obj.discount/100)
+            discount_decimal = Decimal(obj.discount) / Decimal(100)
+            multiplier = Decimal(1) - discount_decimal
+            obj.price = obj.original_price * multiplier
         
         try:
             super().save_model(request, obj, form, change)
@@ -213,4 +218,4 @@ class GameAdmin(admin.ModelAdmin):
     class Media:
         css = {
             'all': ['https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css']
-        }
+        } 
