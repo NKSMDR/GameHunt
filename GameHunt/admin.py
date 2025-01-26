@@ -7,6 +7,7 @@ import requests
 from .models import Game, GameImage
 from decimal import Decimal
 
+
 class GameImageInline(admin.TabularInline):
     model = GameImage
     extra = 3
@@ -214,3 +215,13 @@ class GameAdmin(admin.ModelAdmin):
 class GameImageAdmin(admin.ModelAdmin):
     list_display = ('game', 'is_cover', 'uploaded_at')
     list_filter = ('game', 'is_cover')
+
+from django.contrib.auth.models import User
+from django.contrib.auth.admin import UserAdmin
+# Unregister the default User admin
+admin.site.unregister(User)
+@admin.register(User)
+class CustomUserAdmin(UserAdmin):
+    list_display = ('username', 'is_staff', 'is_active')
+    exclude = ('password', 'last_login')
+    readonly_fields = ('date_joined',)

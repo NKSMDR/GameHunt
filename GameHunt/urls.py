@@ -3,11 +3,13 @@ from django.urls import path, include
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
+from .views import login_view, signup_view
 urlpatterns = [
     path('', views.home, name='home'),  # Changed from game_list to home to match your template
     path('game/<int:game_id>/', views.game_detail, name='game_detail'),  # New URL pattern for game details
     path('cart/', views.cart_view, name='cart'),
-    path('login/', views.login_view, name='login'), 
+    path('login/', login_view, name='login'),
+    path('signup/', signup_view, name='signup'),
 ]
 
 
