@@ -1,7 +1,7 @@
 from django.db import models
 from urllib.parse import urlparse, parse_qs
 from django.core.exceptions import ValidationError
-
+from django.core.validators import FileExtensionValidator
 
 class Game(models.Model):
     SECTION_CHOICE = [
@@ -78,4 +78,29 @@ class Game(models.Model):
         return None
 
     def __str__(self):
-        return self.name 
+        return self.name
+
+class GameImage(models.Model):
+    game = models.ForeignKey(Game, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField(
+        upload_to='game_screenshots/', 
+        validators=[FileExtensionValidator(['png', 'jpg', 'jpeg', 'gif', 'webp'])],
+        help_text="Upload game screenshots. Supported formats: PNG, JPG, JPEG, GIF, WebP"
+    )
+    is_cover = models.BooleanField(default=False, help_text="Mark as cover image")
+    caption = models.CharField(max_length=200, blank=True, null=True, help_text="Optional image caption")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-is_cover', 'uploaded_at']
+        verbose_name = 'Game Image'
+        verbose_name_plural = 'Game Images'
+
+    def __str__(self):
+        return f"{self.game.name} - {self.caption or 'Screenshot'}"
+
+    def save(self, *args, **kwargs):
+        # Ensure only one cover image exists per game
+        if self.is_cover:
+            GameImage.objects.filter(game=self.game, is_cover=True).update(is_cover=False)
+        super().save(*args, **kwargs)

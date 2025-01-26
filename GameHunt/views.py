@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Game
+from .models import Game, GameImage
 
 def home(request):
     featured_games = Game.objects.filter(section='featured')
@@ -26,8 +26,16 @@ def game_detail(request, game_id):
         section=game.section
     ).exclude(id=game_id)[:4]  # Limit to 4 related games
     
+    # Get all images for the game, with cover image first
+    game_images = game.images.all()
+    
     context = {
         'game': game,
+        'game_images': game_images,
         'related_games': related_games,
     }
     return render(request, 'gamepage.html', context)
+
+def cart_view(request):
+    # Optional: Add cart logic if needed
+    return render(request, 'cartpage.html')
