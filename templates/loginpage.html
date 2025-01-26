@@ -1,0 +1,174 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro Login - GAMEXHUNT</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #1a1a1d;
+            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .crt-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(0deg, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.2) 50%);
+            background-size: 100% 3px;
+            pointer-events: none;
+            z-index: 999;
+            animation: scanline 6s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100%; }
+        }
+
+        .login-container {
+            background: radial-gradient(circle at center, #1e1e2f 0%, #0d0d15 100%);
+            border: 4px solid #ff006e;
+            box-shadow: 0 0 20px rgba(255, 0, 110, 0.4),
+                        inset 0 0 15px rgba(255, 0, 110, 0.2);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-top: 5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, 
+                transparent 45%,
+                rgba(255, 0, 110, 0.1) 50%,
+                transparent 55%);
+            animation: glow 4s linear infinite;
+        }
+
+        @keyframes glow {
+            0% { transform: rotate(0deg) translate(-25%, -25%); }
+            100% { transform: rotate(360deg) translate(-25%, -25%); }
+        }
+
+        .login-title {
+            color: #0fa;
+            text-shadow: 0 0 10px #0fa;
+            font-size: 2rem;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .form-control {
+            background: rgba(0, 0, 0, 0.7) !important;
+            border: 2px solid #ff006e;
+            color: #0fa !important;
+            margin-bottom: 1.5rem;
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        .form-control:focus {
+            border-color: #0fa;
+            box-shadow: 0 0 15px rgba(15, 250, 250, 0.3);
+        }
+
+        .btn-retro {
+            background: linear-gradient(45deg, #ff006e, #ff2d87);
+            border: 2px solid #0fa;
+            color: #fff;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-retro:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 0, 110, 0.6);
+        }
+
+        .pixel-border {
+            position: absolute;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                #0fa 10px,
+                #0fa 20px
+            );
+            animation: border-scroll 4s linear infinite;
+        }
+
+        @keyframes border-scroll {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="crt-effect"></div>
+
+    <!-- Navbar (Same as other pages) -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <!-- Insert your existing navbar code here -->
+    </nav>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                <div class="login-container">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-user-astronaut fa-3x mb-3" style="color: #0fa"></i>
+                        <h1 class="login-title">PLAYER LOGIN</h1>
+                    </div>
+
+                    <form>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" placeholder="USERNAME" required>
+                        </div>
+                        <div class="mb-4">
+                            <input type="password" class="form-control" placeholder="PASSWORD" required>
+                        </div>
+                        <button type="submit" class="btn btn-retro w-100">
+                            <i class="fas fa-power-off me-2"></i>ACCESS TERMINAL
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <a href="#" class="text-warning" style="text-decoration: none">
+                            <i class="fas fa-key me-2"></i>FORGOT ACCESS CODE?
+                        </a>
+                        <div class="mt-3">
+                            <span class="text-muted">NEW PLAYER?</span>
+                            <a href="#" class="text-success ms-2">CREATE PROFILE</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer (Same as other pages) -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <!-- Insert your existing footer code here -->
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

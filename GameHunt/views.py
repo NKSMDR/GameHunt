@@ -39,3 +39,6 @@ def game_detail(request, game_id):
 def cart_view(request):
     # Optional: Add cart logic if needed
     return render(request, 'cartpage.html')
+# views.py
+def login_view(request):
+    return render(request, 'loginpage.html')  # Make sure to create login.html with your template
