@@ -1,7 +1,9 @@
+# models.py
 from django.db import models
 from urllib.parse import urlparse, parse_qs
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
+from decimal import Decimal
 
 class Game(models.Model):
     SECTION_CHOICE = [
@@ -21,14 +23,11 @@ class Game(models.Model):
         ('HORROR', 'Horror'),
     ]
     
-    # Existing fields
     name = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     image_url = models.CharField(max_length=255)
     video_url = models.URLField()
     section = models.CharField(max_length=10, choices=SECTION_CHOICE, default='featured')
-    
-    # New fields for game detail page
     description = models.TextField(null=True, blank=True)
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='ACTION')
     developer = models.CharField(max_length=200, null=True, blank=True)
@@ -36,7 +35,6 @@ class Game(models.Model):
     release_date = models.DateField(null=True, blank=True)
     rating = models.DecimalField(max_digits=3, decimal_places=1, null=True, blank=True)
     reviews_count = models.IntegerField(default=0)
-    original_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     discount = models.IntegerField(null=True, blank=True)
     languages = models.CharField(max_length=500, default='English')
     platform = models.CharField(max_length=100, default='PC')
@@ -49,6 +47,13 @@ class Game(models.Model):
     def clean(self):
         if Game.objects.filter(name=self.name, section=self.section).exclude(pk=self.pk).exists():
             raise ValidationError(f'The game "{self.name}" is already in the "{self.section}" section.')
+
+    @property
+    def final_price(self):
+        if self.discount:
+            discount_amount = (self.price * Decimal(str(self.discount))) /Decimal('100')
+            return self.price - discount_amount
+        return self.price
     
     def save(self, *args, **kwargs):
         self.clean()
@@ -100,7 +105,6 @@ class GameImage(models.Model):
         return f"{self.game.name} - {self.caption or 'Screenshot'}"
 
     def save(self, *args, **kwargs):
-        # Ensure only one cover image exists per game
         if self.is_cover:
             GameImage.objects.filter(game=self.game, is_cover=True).update(is_cover=False)
         super().save(*args, **kwargs)

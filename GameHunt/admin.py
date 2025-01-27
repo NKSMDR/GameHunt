@@ -1,3 +1,4 @@
+# admin.py
 from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse
@@ -6,7 +7,7 @@ from django.contrib import messages
 import requests
 from .models import Game, GameImage
 from decimal import Decimal
-
+from django.utils.html import format_html
 
 class GameImageInline(admin.TabularInline):
     model = GameImage
@@ -29,16 +30,14 @@ class GameAdmin(admin.ModelAdmin):
     @admin.display(description='Price')
     def formatted_price(self, obj):
         if obj.discount:
-            original_price_str = f"{obj.original_price:.2f}"
-            discounted_price_str = f"{obj.price:.2f}"
             return format_html(
                 '<span style="text-decoration: line-through; color: #999;">${}</span>'
                 '<br>'
                 '<span style="color: #28a745;">${}</span>',
-                original_price_str,
-                discounted_price_str
+                obj.price,
+                obj.final_price
             )
-        return f"${obj.price:.2f}"
+        return format_html('${}', obj.price)
 
     @admin.display(description='Rating')
     def rating_display(self, obj):
@@ -131,10 +130,9 @@ class GameAdmin(admin.ModelAdmin):
         ('Pricing', {
             'fields': (
                 'price',
-                'original_price',
-                'discount'
+                'discount',
             ),
-            'description': 'Set original price and discount, the sale price will be calculated automatically.'
+            'description': 'Enter the base price and optional discount percentage (0-100)'
         }),
         ('Game Details', {
             'fields': (
@@ -168,7 +166,6 @@ class GameAdmin(admin.ModelAdmin):
     list_display_links = ('name_with_preview',)
     inlines = [GameImageInline]
 
-    # Custom Actions
     actions = ['mark_as_featured', 'clear_discount', 'verify_media_urls']
 
     def image_count(self, obj):
@@ -181,7 +178,7 @@ class GameAdmin(admin.ModelAdmin):
     mark_as_featured.short_description = "Mark selected games as featured"
 
     def clear_discount(self, request, queryset):
-        updated = queryset.update(discount=None, original_price=None)
+        updated = queryset.update(discount=None)
         self.message_user(request, f'Cleared discounts for {updated} games.')
     clear_discount.short_description = "Clear discounts"
 
@@ -190,16 +187,14 @@ class GameAdmin(admin.ModelAdmin):
         failed = []
         for game in queryset:
             try:
-                # Verify image URL
                 img_response = requests.head(game.image_url, timeout=5)
                 if img_response.status_code != 200:
                     failed.append(f"{game.name} (Invalid image URL)")
                     continue
                 
-                # Verify video URL exists
                 if game.video_id is None:
                     failed.append(f"{game.name} (Invalid video URL)")
-                    continue
+                    continue 
                 
                 success += 1
             except requests.RequestException:
@@ -218,7 +213,6 @@ class GameImageAdmin(admin.ModelAdmin):
 
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
-# Unregister the default User admin
 admin.site.unregister(User)
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
