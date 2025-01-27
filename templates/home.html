@@ -247,7 +247,7 @@
 
 <!--Trending section-->
 <section class="py-5">
-  <div class="container">
+  <div class="container-fluid">
     <h2
       class="text-center mb-4"
       style="
@@ -262,17 +262,17 @@
       Trending Now
     </h2>
 
-    <div class="row g-4 mb-4 position-relative">
+    <div class="carousel-wrapper position-relative">
       <button class="carousel-control-prev" type="button" id="prevBtn">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Previous</span>
       </button>
 
-      <div class="games-wrapper overflow-visible">
-        <div class="games-container d-flex transition-all">
+      <div class="games-wrapper">
+        <div class="games-container d-flex">
           {% for game in trending_games %}
-          <div class="col-md-3 flex-shrink-0">
-            <div class="card game-card position-relative">
+          <div class="game-slide">
+            <div class="card game-card">
               <img
                 src="{{ game.image_url }}"
                 class="card-img-top"
@@ -291,7 +291,7 @@
                 <a href="{% url 'game_detail' game.id %}" class="stretched-link"></a>
                 <h5 class="game-title">{{ game.name }}</h5>
                 <span class="game-price">${{ game.price }}</span>
-            </div>
+              </div>
             </div>
           </div>
           {% endfor %}
@@ -303,43 +303,132 @@
         <span class="visually-hidden">Next</span>
       </button>
     </div>
-
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-          const container = document.querySelector('.games-container');
-          const prevBtn = document.getElementById('prevBtn');
-          const nextBtn = document.getElementById('nextBtn');
-          const gameWidth = document.querySelector('.col-md-3').offsetWidth;
-          let currentPosition = 0;
-          const totalGames = {{ trending_games|length }};
-          const maxPosition = totalGames - 4; // Show 4 games at once
-
-          function updateButtons() {
-              prevBtn.disabled = currentPosition <= 0;
-              nextBtn.disabled = currentPosition >= maxPosition;
-          }
-
-          prevBtn.addEventListener('click', () => {
-              if (currentPosition > 0) {
-                  currentPosition--;
-                  container.style.transform = `translateX(-${currentPosition * gameWidth}px)`;
-                  updateButtons();
-              }
-          });
-
-          nextBtn.addEventListener('click', () => {
-              if (currentPosition < maxPosition) {
-                  currentPosition++;
-                  container.style.transform = `translateX(-${currentPosition * gameWidth}px)`;
-                  updateButtons();
-              }
-          });
-
-          // Initial button state
-          updateButtons();
-      });
-    </script>
   </div>
+
+  <style>
+    .carousel-wrapper {
+      width: 100%;
+      max-width: 110%; /* Increased from 104% to give more space */
+      margin: 0 auto;
+      padding: 0 60px;
+      overflow: visible; /* Changed from hidden to allow hover effect to show */
+    }
+
+    .games-wrapper {
+      overflow: hidden;
+      margin: 0 30px;
+      padding: 20px 0; /* Added padding to accommodate hover effect */
+    }
+
+    .games-container {
+      display: flex;
+      transition: transform 0.3s ease;
+      gap: 25px;
+    }
+
+    .game-slide {
+      flex: 0 0 calc(25% - 18.75px); /* Adjusted width calculation */
+      max-width: calc(25% - 18.75px);
+      padding: 0;
+    }
+
+    .game-card {
+      transition: transform 0.3s ease;
+      margin: 0;
+      transform-origin: center center; /* Added to keep transformation centered */
+    }
+
+    .game-card:hover {
+      transform: translateY(-10px) scale(1.05);
+      z-index: 2;
+      position: relative;
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      background-color: rgba(0,0,0,0.5);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .carousel-control-prev {
+      left: 0;
+    }
+
+    .carousel-control-next {
+      right: 0;
+    }
+
+    .carousel-control-prev:disabled,
+    .carousel-control-next:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    /* Updated responsive adjustments */
+    @media (max-width: 1400px) {
+      .carousel-wrapper {
+        max-width: 100%;
+        padding: 0 50px;
+      }
+      
+      .game-slide {
+        flex: 0 0 calc(25% - 15px);
+        max-width: calc(25% - 15px);
+      }
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const container = document.querySelector('.games-container');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const slides = document.querySelectorAll('.game-slide');
+      let currentPosition = 0;
+      const totalSlides = slides.length;
+      const slidesToShow = 4;
+      const maxPosition = totalSlides - slidesToShow;
+
+      function updateButtons() {
+        prevBtn.disabled = currentPosition <= 0;
+        nextBtn.disabled = currentPosition >= maxPosition;
+      }
+
+      function updateSlidePosition() {
+        const slideWidth = slides[0].offsetWidth + 25; // Updated to match gap
+        container.style.transform = `translateX(-${currentPosition * slideWidth}px)`;
+      }
+
+      prevBtn.addEventListener('click', () => {
+        if (currentPosition > 0) {
+          currentPosition--;
+          updateSlidePosition();
+          updateButtons();
+        }
+      });
+
+      nextBtn.addEventListener('click', () => {
+        if (currentPosition < maxPosition) {
+          currentPosition++;
+          updateSlidePosition();
+          updateButtons();
+        }
+      });
+
+      updateButtons();
+      window.addEventListener('resize', updateSlidePosition);
+    });
+  </script>
 </section>
 
     <!-- 3 Categories Section -->

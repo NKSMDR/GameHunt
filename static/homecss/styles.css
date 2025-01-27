@@ -114,14 +114,14 @@ body {
 }
 
 /* ========== Trending Section Adjustments ========== */
-.games-container .game-card {
+/* .games-container .game-card {
     flex-shrink: 0;
     margin: 0 10px;
 }
 
 .games-container .game-card:hover {
     transform: translateY(-10px) scale(1.05);
-    z-index: 2; /* Bring hovered card forward */
+    z-index: 2;
     position: relative;
 }
 
@@ -149,7 +149,7 @@ body {
 
 .carousel-control-next {
     right: 10;
-}
+} */
   
 /* ========== Existing Other Styles ========== */
 .hero-section {

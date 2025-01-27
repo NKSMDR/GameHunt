@@ -256,9 +256,24 @@
                 <li class="nav-item">
                     <a class="nav-link {% if request.path == '/games/' %}active{% endif %}" href="{% url 'all_games' %}">Games</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if request.path == '/categories/' %}active{% endif %}" href="#">Categories</a>
-                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle {% if request.path == '/categories/' %}active{% endif %}" 
+                     href="#" 
+                     id="categoriesDropdown" 
+                     role="button" 
+                     data-bs-toggle="dropdown" 
+                     aria-expanded="false">
+                      Categories
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="categoriesDropdown">
+                      <li><a class="dropdown-item" href="#"><i class="fas fa-gamepad me-2"></i>Action</a></li>
+                      <li><a class="dropdown-item" href="#"><i class="fas fa-dragon me-2"></i>RPG</a></li>
+                      <li><a class="dropdown-item" href="#"><i class="fas fa-football-ball me-2"></i>Sports</a></li>
+                      <li><a class="dropdown-item" href="#"><i class="fas fa-chess me-2"></i>Strategy</a></li>
+                      <li><a class="dropdown-item" href="#"><i class="fas fa-car me-2"></i>Racing</a></li>
+                      <li><a class="dropdown-item" href="#"><i class="fas fa-ghost me-2"></i>Horror</a></li>
+                  </ul>
+              </li>
                 <li class="nav-item">
                     <a class="nav-link {% if request.path == '/deals/' %}active{% endif %}" href="#">Deals</a>
                 </li>
@@ -284,7 +299,7 @@
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                         <li><a class="dropdown-item" href="#">Account Details</a></li>
                         <li><a class="dropdown-item" href="#">Orders</a></li>
-                        <li><a class="dropdown" href="#"></a>Library</li>
+                        <li><a class="dropdown-item" href="#">Library</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <form method="post" action="{% url 'logout' %}">
