@@ -38,9 +38,24 @@
                   <li class="nav-item">
                       <a class="nav-link {% if request.path == '/games/' %}active{% endif %}" href="{% url 'all_games' %}">Games</a>
                   </li>
-                  <li class="nav-item">
-                      <a class="nav-link {% if request.path == '/categories/' %}active{% endif %}" href="#">Categories</a>
-                  </li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {% if request.path == '/categories/' %}active{% endif %}" 
+                       href="#" 
+                       id="categoriesDropdown" 
+                       role="button" 
+                       data-bs-toggle="dropdown" 
+                       aria-expanded="false">
+                        Categories
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="categoriesDropdown">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-gamepad me-2"></i>Action</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-dragon me-2"></i>RPG</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-football-ball me-2"></i>Sports</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-chess me-2"></i>Strategy</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-car me-2"></i>Racing</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-ghost me-2"></i>Horror</a></li>
+                    </ul>
+                </li>
                   <li class="nav-item">
                       <a class="nav-link {% if request.path == '/deals/' %}active{% endif %}" href="#">Deals</a>
                   </li>
@@ -66,7 +81,7 @@
                       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                           <li><a class="dropdown-item" href="#">Account Details</a></li>
                           <li><a class="dropdown-item" href="#">Orders</a></li>
-                          <li><a class="dropdown" href="#"></a>Library</li>
+                          <li><a class="dropdown-item" href="#">Library</a></li>
                           <li><hr class="dropdown-divider"></li>
                           <li>
                               <form method="post" action="{% url 'logout' %}">
@@ -230,102 +245,102 @@
       </div>
     </section>
 
- <!--Trending section-->
-    <section class="py-5">
-      <div class="container">
-        <h2
-          class="text-center mb-4"
-          style="
-            color: #fff;
-            text-shadow: 0 0 2px #fff, 0 0 4px #0fa, 0 0 6px #0fa;
-            font-weight: bold;
-            transition: text-shadow 0.3s ease;
-          "
-          onmouseover="this.style.textShadow='0 0 10px #fff, 0 0 20px #fff, 0 0 30px #0fa, 0 0 40px #0fa, 0 0 70px #0fa'"
-          onmouseout="this.style.textShadow='0 0 2px #fff, 0 0 4px #0fa, 0 0 6px #0fa'"
-        >
-          Trending Now
-        </h2>
+<!--Trending section-->
+<section class="py-5">
+  <div class="container">
+    <h2
+      class="text-center mb-4"
+      style="
+        color: #fff;
+        text-shadow: 0 0 2px #fff, 0 0 4px #0fa, 0 0 6px #0fa;
+        font-weight: bold;
+        transition: text-shadow 0.3s ease;
+      "
+      onmouseover="this.style.textShadow='0 0 10px #fff, 0 0 20px #fff, 0 0 30px #0fa, 0 0 40px #0fa, 0 0 70px #0fa'"
+      onmouseout="this.style.textShadow='0 0 2px #fff, 0 0 4px #0fa, 0 0 6px #0fa'"
+    >
+      Trending Now
+    </h2>
 
-        <div class="row g-4 mb-4 position-relative">
-          <button class="carousel-control-prev" type="button" id="prevBtn">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-          </button>
+    <div class="row g-4 mb-4 position-relative">
+      <button class="carousel-control-prev" type="button" id="prevBtn">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
 
-          <div class="games-wrapper overflow-visible">
-            <div class="games-container d-flex transition-all">
-              {% for game in trending_games %}
-              <div class="col-md-3 flex-shrink-0">
-                <div class="card game-card position-relative">
-                  <img
-                    src="{{ game.image_url }}"
-                    class="card-img-top"
-                    alt="Game"
-                  />
-                  <div class="video-container">
-                    <iframe
-                      src="{{ game.video_url }}?autoplay=1&mute=1&controls=0&loop=1&playlist={{ game.video_id }}&playsinline=1&vq=hd1080&enablejsapi=1"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowfullscreen
-                    >
-                    </iframe>
-                    <button class="btn btn-light btn-sm unmute-btn">🔊</button>
-                  </div>
-                  <div class="card-body game-name-container">
-                    <a href="{% url 'game_detail' game.id %}" class="stretched-link"></a>
-                    <h5 class="game-title">{{ game.name }}</h5>
-                    <span class="game-price">${{ game.price }}</span>
-                </div>
-                </div>
+      <div class="games-wrapper overflow-visible">
+        <div class="games-container d-flex transition-all">
+          {% for game in trending_games %}
+          <div class="col-md-3 flex-shrink-0">
+            <div class="card game-card position-relative">
+              <img
+                src="{{ game.image_url }}"
+                class="card-img-top"
+                alt="Game"
+              />
+              <div class="video-container">
+                <iframe
+                  src="{{ game.video_url }}?autoplay=1&mute=1&controls=0&loop=1&playlist={{ game.video_id }}&playsinline=1&vq=hd1080&enablejsapi=1"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen
+                >
+                </iframe>
+                <button class="btn btn-light btn-sm unmute-btn">🔊</button>
               </div>
-              {% endfor %}
+              <div class="card-body game-name-container">
+                <a href="{% url 'game_detail' game.id %}" class="stretched-link"></a>
+                <h5 class="game-title">{{ game.name }}</h5>
+                <span class="game-price">${{ game.price }}</span>
+            </div>
             </div>
           </div>
-
-          <button class="carousel-control-next" type="button" id="nextBtn">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-          </button>
+          {% endfor %}
         </div>
-
-        <script>
-          document.addEventListener('DOMContentLoaded', function() {
-              const container = document.querySelector('.games-container');
-              const prevBtn = document.getElementById('prevBtn');
-              const nextBtn = document.getElementById('nextBtn');
-              const gameWidth = document.querySelector('.col-md-3').offsetWidth;
-              let currentPosition = 0;
-              const totalGames = {{ trending_games|length }};
-              const maxPosition = totalGames - 4; // Show 4 games at once
-
-              function updateButtons() {
-                  prevBtn.disabled = currentPosition <= 0;
-                  nextBtn.disabled = currentPosition >= maxPosition;
-              }
-
-              prevBtn.addEventListener('click', () => {
-                  if (currentPosition > 0) {
-                      currentPosition--;
-                      container.style.transform = `translateX(-${currentPosition * gameWidth}px)`;
-                      updateButtons();
-                  }
-              });
-
-              nextBtn.addEventListener('click', () => {
-                  if (currentPosition < maxPosition) {
-                      currentPosition++;
-                      container.style.transform = `translateX(-${currentPosition * gameWidth}px)`;
-                      updateButtons();
-                  }
-              });
-
-              // Initial button state
-              updateButtons();
-          });
-        </script>
       </div>
-    </section>
+
+      <button class="carousel-control-next" type="button" id="nextBtn">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          const container = document.querySelector('.games-container');
+          const prevBtn = document.getElementById('prevBtn');
+          const nextBtn = document.getElementById('nextBtn');
+          const gameWidth = document.querySelector('.col-md-3').offsetWidth;
+          let currentPosition = 0;
+          const totalGames = {{ trending_games|length }};
+          const maxPosition = totalGames - 4; // Show 4 games at once
+
+          function updateButtons() {
+              prevBtn.disabled = currentPosition <= 0;
+              nextBtn.disabled = currentPosition >= maxPosition;
+          }
+
+          prevBtn.addEventListener('click', () => {
+              if (currentPosition > 0) {
+                  currentPosition--;
+                  container.style.transform = `translateX(-${currentPosition * gameWidth}px)`;
+                  updateButtons();
+              }
+          });
+
+          nextBtn.addEventListener('click', () => {
+              if (currentPosition < maxPosition) {
+                  currentPosition++;
+                  container.style.transform = `translateX(-${currentPosition * gameWidth}px)`;
+                  updateButtons();
+              }
+          });
+
+          // Initial button state
+          updateButtons();
+      });
+    </script>
+  </div>
+</section>
 
     <!-- 3 Categories Section -->
     <section class="game-lists-section py-5">
