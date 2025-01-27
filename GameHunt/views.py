@@ -74,3 +74,7 @@ def signup_view(request):
         else:
             messages.error(request, 'Passwords do not match.')
     return render(request, 'signup.html')
+
+def all_games(request):
+    games = Game.objects.all()
+    return render(request, 'allgames.html', {'games': games})

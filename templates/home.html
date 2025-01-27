@@ -21,7 +21,7 @@
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
-      <div class="container">
+      <div class="container-fluid">
           <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
               <img src="/static/GameImages/ghost_of_tsushima/logo2.png" alt="Logo" style="max-height: 40px" class="me-2">
               <span style="font-size: 1.2rem; color: yellowgreen; font-family: 'Press Start 2P', cursive;">GAMEXHUNT</span>
@@ -36,7 +36,7 @@
                       <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">Home</a>
                   </li>
                   <li class="nav-item">
-                      <a class="nav-link {% if request.path == '/games/' %}active{% endif %}" href="#">Games</a>
+                      <a class="nav-link {% if request.path == '/games/' %}active{% endif %}" href="{% url 'all_games' %}">Games</a>
                   </li>
                   <li class="nav-item">
                       <a class="nav-link {% if request.path == '/categories/' %}active{% endif %}" href="#">Categories</a>
@@ -53,6 +53,9 @@
                       <i class="fas fa-search"></i>
                   </button>
               </form>
+              <a href="{% url 'cart' %}" class="btn btn-outline-light me-2"
+              ><i class="fas fa-shopping-cart"></i
+            ></a>
               <div class="d-flex">
                   {% if user.is_authenticated %}
                   <!-- Dropdown for logged-in users -->
@@ -324,9 +327,6 @@
       </div>
     </section>
 
-
-
-
     <!-- 3 Categories Section -->
     <section class="game-lists-section py-5">
       <div class="container">
@@ -562,7 +562,7 @@
 
     <!-- Footer -->
     <footer class="bg-dark text-light py-4">
-      <div class="container">
+      <div class="container-fluid">
         <div class="row">
           <div class="col-md-4">
             <h5>About GameStore</h5>

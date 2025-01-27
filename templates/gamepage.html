@@ -136,10 +136,9 @@
     </style>
 </head>
 <body>
-    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="#">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
                 <img src="/static/GameImages/ghost_of_tsushima/logo2.png" alt="Logo" style="max-height: 40px" class="me-2">
                 <span style="font-size: 1.2rem; color: yellowgreen; font-family: 'Press Start 2P', cursive;">GAMEXHUNT</span>
             </a>
@@ -147,21 +146,56 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
+              <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Games</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Categories</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Deals</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/games/' %}active{% endif %}" href="{% url 'all_games' %}">Games</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/categories/' %}active{% endif %}" href="#">Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/deals/' %}active{% endif %}" href="#">Deals</a>
+                    </li>
                 </ul>
+            </div>
+            
                 <form class="d-flex me-3">
                     <input class="form-control me-2" type="search" placeholder="Search games...">
                     <button class="btn btn-outline-light" type="submit">
                         <i class="fas fa-search"></i>
                     </button>
                 </form>
+                <a href="{% url 'cart' %}" class="btn btn-outline-light me-2"
+                ><i class="fas fa-shopping-cart"></i
+              ></a>
                 <div class="d-flex">
-                    <a href="#" class="btn btn-outline-light me-2"><i class="fas fa-shopping-cart"></i></a>
-                    <a href="#" class="btn btn-primary"><i class="fas fa-user me-2"></i>Login</a>
+                    {% if user.is_authenticated %}
+                    <!-- Dropdown for logged-in users -->
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle fa-lg"></i> 
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="#">Account Details</a></li>
+                            <li><a class="dropdown-item" href="#">Orders</a></li>
+                            <li><a class="dropdown-item" href="#"></a>Library</li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="post" action="{% url 'logout' %}">
+                                    {% csrf_token %}
+                                    <button class="dropdown-item" type="submit">Sign Out</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                    {% else %}
+                    <!-- Login button for guests -->
+                    <a href="{% url 'login' %}" class="btn btn-primary"><i class="fas fa-user-circle fa-lg"></i> </a>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -296,7 +330,7 @@
 
     <!-- Footer -->
     <footer class="bg-dark text-light py-4 mt-5" style="font-family: 'Press Start 2P', cursive;">
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-md-4">
                     <h5>About GameStore</h5>
