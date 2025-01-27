@@ -133,6 +133,64 @@
         .section-title:hover {
             text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #0fa, 0 0 40px #0fa, 0 0 70px #0fa;
         }
+                
+        /* New carousel styles */
+        .game-carousel {
+            background: linear-gradient(145deg, #1e1e2f, #232334);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .carousel-inner {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .carousel-item img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+        }
+
+        .carousel-caption {
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .carousel-thumbnails {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 10px 0;
+            margin-top: 10px;
+        }
+
+        .carousel-thumbnail {
+            width: 100px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+
+        .carousel-thumbnail:hover,
+        .carousel-thumbnail.active {
+            opacity: 1;
+        }
+
+        .carousel-control-prev,
+        .carousel-control-next {
+            width: 5%;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 4px;
+            height: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
     </style>
 </head>
 <body>
@@ -214,6 +272,46 @@
                 <img src="{{ game.image_url }}" alt="{{ game.name }}">
             {% endif %}
         </div>
+
+                <!-- New Image Carousel Section -->
+                <div class="game-carousel">
+                    <div id="gameImageCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            {% for image in game.images.all %}
+                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                <img src="{{ image.image.url }}" class="d-block w-100" alt="{{ image.caption }}">
+                                {% if image.caption %}
+                                <div class="carousel-caption d-none d-md-block">
+                                    <p>{{ image.caption }}</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <button class="carousel-control-prev" type="button" data-bs-target="#gameImageCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#gameImageCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+        
+                    <!-- Thumbnails -->
+                    <div class="carousel-thumbnails">
+                        {% for image in game.images.all %}
+                        <img 
+                            src="{{ image.image.url }}" 
+                            class="carousel-thumbnail {% if forloop.first %}active{% endif %}"
+                            data-bs-target="#gameImageCarousel"
+                            data-bs-slide-to="{{ forloop.counter0 }}"
+                            alt="Thumbnail {{ forloop.counter }}"
+                        >
+                        {% endfor %}
+                    </div>
+                </div>
 
         <!-- Game Info -->
         <div class="row">
@@ -453,7 +551,26 @@
     
             updateIframeUrls();
             setupVideoInteractions();
+                        // New carousel thumbnail interaction
+                        const thumbnails = document.querySelectorAll('.carousel-thumbnail');
+                        const carousel = document.querySelector('#gameImageCarousel');
+                        
+                        if (carousel) {
+                            carousel.addEventListener('slide.bs.carousel', (event) => {
+                                // Update active thumbnail
+                                thumbnails.forEach(thumb => thumb.classList.remove('active'));
+                                thumbnails[event.to].classList.add('active');
+                            });
+            
+                            thumbnails.forEach(thumbnail => {
+                                thumbnail.addEventListener('click', () => {
+                                    thumbnails.forEach(t => t.classList.remove('active'));
+                                    thumbnail.classList.add('active');
+                                });
+                            });
+                        } 
         });
+        
     </script>
 </body>
 </html>

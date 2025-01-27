@@ -24,7 +24,7 @@ class Game(models.Model):
     ]
     
     name = models.CharField(max_length=100)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2,null=True, blank=True)
     image_url = models.CharField(max_length=255)
     video_url = models.URLField()
     section = models.CharField(max_length=10, choices=SECTION_CHOICE, default='featured')

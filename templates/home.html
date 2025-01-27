@@ -145,7 +145,7 @@
                   <div class="game-name-container">
                       <a href="{% url 'game_detail' game.id %}" class="stretched-link"></a>
                       <h5 class="game-title">{{ game.name }}</h5>
-                      <span class="game-price">${{ game.price }}</span>
+                      <span class="final-price">${{game.final_price|floatformat:0 }}</span>
                   </div>
               </div>
           </div>
@@ -171,7 +171,7 @@
                   <div class="game-name-container">
                       <a href="{% url 'game_detail' game.id %}" class="stretched-link"></a>
                       <h5 class="game-title">{{ game.name }}</h5>
-                      <span class="game-price">${{ game.price }}</span>
+                      <span class="final-price">${{game.final_price|floatformat:2 }}</span>
                   </div>
               </div>
           </div>
@@ -243,6 +243,40 @@
           </div>
         </div>
       </div>
+      <!-- Add this right before the closing </section> tag of the Categories Section -->
+<style>
+  .hover-effect {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 1px solid rgba(0,0,0,0.1);
+  }
+
+  .hover-effect:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    background: linear-gradient(45deg, #1a1a1a, #2d2d2d);
+  }
+
+  .hover-effect:hover i {
+    color: yellowgreen;
+    transform: scale(1.2);
+  }
+
+  .hover-effect:hover h6 {
+    color: #fff;
+    text-shadow: 0 0 8px yellowgreen;
+  }
+
+  .hover-effect i {
+    transition: all 0.3s ease;
+    color: #666;
+  }
+
+  .hover-effect h6 {
+    transition: all 0.3s ease;
+    color: #333;
+  }
+</style>
     </section>
 
 <!--Trending section-->
@@ -290,7 +324,7 @@
               <div class="card-body game-name-container">
                 <a href="{% url 'game_detail' game.id %}" class="stretched-link"></a>
                 <h5 class="game-title">{{ game.name }}</h5>
-                <span class="game-price">${{ game.price }}</span>
+                <span class="final-price">${{ game.final_price|floatformat:2 }}</span>
               </div>
             </div>
           </div>

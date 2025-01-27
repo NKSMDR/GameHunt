@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        .game-details-media {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background: #1a1a1d;
+            overflow: hidden;
+            border-radius: 8px;
+        }
+
+        .media-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transition: opacity 0.3s ease;
+        }
+
+        .video-container {
+            z-index: 1;
+        }
+
+        .carousel-container {
+            z-index: 2;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .carousel-container.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .carousel-item img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+        }
+
+        .media-thumbnails {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 3;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .media-thumbnail {
+            width: 60px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .media-thumbnail:hover,
+        .media-thumbnail.active {
+            opacity: 1;
+            border-color: #0fa;
+        }
+
+        .video-thumbnail {
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        .unmute-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="game-details-media">
+            <!-- Video Container -->
+            <div class="media-container video-container">
+                {% if game.embed_url %}
+                <iframe 
+                    src="{{ game.embed_url }}?autoplay=1&mute=1&controls=0&loop=1&playsinline=1&vq=hd1080&enablejsapi=1" 
+                    width="100%" 
+                    height="100%"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+                {% else %}
+                    <img src="{{ game.image_url }}" alt="{{ game.name }}" style="width:100%; height:100%; object-fit:cover;">
+                {% endif %}
+            </div>
+
+            <!-- Image Carousel Container -->
+            <div class="media-container carousel-container">
+                <div id="gameImageCarousel" class="carousel slide h-100">
+                    <div class="carousel-inner h-100">
+                        {% for image in game.images.all %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <img src="{{ image.image.url }}" alt="{{ image.caption }}">
+                            {% if image.caption %}
+                            <div class="carousel-caption">
+                                <p>{{ image.caption }}</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <button class="carousel-control-prev" type="button" data-bs-target="#gameImageCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#gameImageCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Thumbnails -->
+            <div class="media-thumbnails">
+                <div class="media-thumbnail video-thumbnail active" data-type="video">
+                    <i class="fas fa-play"></i>
+                </div>
+                {% for image in game.images.all %}
+                <img 
+                    src="{{ image.image.url }}" 
+                    class="media-thumbnail"
+                    data-type="image"
+                    data-bs-target="#gameImageCarousel"
+                    data-bs-slide-to="{{ forloop.counter0 }}"
+                    alt="Thumbnail {{ forloop.counter }}"
+                >
+                {% endfor %}
+            </div>
+
+            <button class="unmute-btn">🔊</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const videoContainer = document.querySelector('.video-container');
+            const carouselContainer = document.querySelector('.carousel-container');
+            const thumbnails = document.querySelectorAll('.media-thumbnail');
+            const unmuteBtn = document.querySelector('.unmute-btn');
+            const iframe = document.querySelector('iframe');
+
+            thumbnails.forEach(thumbnail => {
+                thumbnail.addEventListener('click', () => {
+                    const isVideo = thumbnail.dataset.type === 'video';
+                    
+                    // Update containers visibility
+                    videoContainer.style.opacity = isVideo ? '1' : '0';
+                    carouselContainer.style.opacity = isVideo ? '0' : '1';
+                    carouselContainer.classList.toggle('active', !isVideo);
+
+                    // Update thumbnails
+                    thumbnails.forEach(t => t.classList.remove('active'));
+                    thumbnail.classList.add('active');
+
+                    // Handle video
+                    if (isVideo && iframe) {
+                        try {
+                            iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                        } catch(e) {
+                            console.error('Error playing video', e);
+                        }
+                    } else if (iframe) {
+                        try {
+                            iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                        } catch(e) {
+                            console.error('Error pausing video', e);
+                        }
+                    }
+                });
+            });
+
+            // Unmute button functionality
+            if (unmuteBtn && iframe) {
+                unmuteBtn.addEventListener('click', () => {
+                    try {
+                        iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+                        unmuteBtn.style.display = 'none';
+                    } catch(e) {
+                        console.error('Error unmuting video', e);
+                    }
+                });
+            }
+
+            // Handle carousel events
+            const carousel = document.querySelector('#gameImageCarousel');
+            if (carousel) {
+                carousel.addEventListener('slide.bs.carousel', (event) => {
+                    const imagesThumbnails = Array.from(thumbnails).filter(t => t.dataset.type === 'image');
+                    imagesThumbnails.forEach(thumb => thumb.classList.remove('active'));
+                    imagesThumbnails[event.to].classList.add('active');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

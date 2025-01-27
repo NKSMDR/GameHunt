@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>All Games</title>
+  <title>All Games - GAMEXHUNT</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-<style>
+  <style>
     body {
       background-color: #1a1a1d;
       color: #fff;
@@ -23,14 +23,142 @@
       background-size: 50px 50px;
     }
 
-    .container {
-      display: grid;
-      grid-template-columns: 1fr 3fr 1fr;
-      gap: 20px;
-      padding: 20px;
-      height: 100vh;
+    /* Retro Scanline Effect */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%,
+        rgba(0, 0, 0, 0.15) 50%
+      );
+      background-size: 100% 4px;
+      z-index: 1000;
+      pointer-events: none;
+      opacity: 0.1;
     }
 
+    /* Game Grid Layout */
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .game-card {
+      background: linear-gradient(145deg, #232334, #2c2c44);
+      border: 2px solid #ff006e;
+      border-radius: 8px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .game-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(255, 0, 110, 0.3);
+    }
+
+    .game-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+      );
+      transform: rotate(45deg);
+      transition: 0.5s;
+    }
+
+    .game-card:hover::before {
+      left: 100%;
+    }
+
+    .game-image {
+      width: 100%;
+      height: 150px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .game-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .game-card:hover .game-image img {
+      transform: scale(1.1);
+    }
+
+    .game-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ff006e;
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      text-shadow: 0 0 5px rgba(255, 0, 110, 0.5);
+    }
+
+    .game-info {
+      padding: 15px;
+    }
+
+    .game-title {
+      font-size: 1rem;
+      color: #ff006e;
+      margin: 0;
+      text-shadow: 0 0 5px rgba(255, 0, 110, 0.5);
+      transition: text-shadow 0.3s ease;
+    }
+
+    .game-card:hover .game-title {
+      text-shadow: 0 0 10px rgba(255, 0, 110, 0.8);
+    }
+
+    .game-price {
+      font-size: 0.9rem;
+      color: #0fa;
+      text-shadow: 0 0 5px rgba(0, 255, 170, 0.5);
+      margin-top: 8px;
+    }
+
+    .game-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+
+    .game-actions button {
+      background: #0fa;
+      color: #1a1a1d;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .game-actions button:hover {
+      background: #ff006e;
+      color: #fff;
+    }
+
+    /* Sidebar Enhancements */
     .sidebar {
       background: linear-gradient(145deg, #1e1e2f, #232334);
       padding: 20px;
@@ -64,140 +192,7 @@
       box-shadow: 0 0 10px #ff006e;
     }
 
-    .sidebar label {
-      display: block;
-      font-size: 0.8rem;
-      margin: 10px 0;
-      cursor: pointer;
-      transition: color 0.3s ease;
-    }
-
-    .sidebar label:hover {
-      color: #0fa;
-      text-shadow: 0 0 5px rgba(0, 255, 170, 0.5);
-    }
-
-    .sidebar input[type="checkbox"],
-    .sidebar input[type="radio"] {
-      margin-right: 10px;
-      cursor: pointer;
-    }
-
-    .main-content {
-      background: linear-gradient(145deg, #1e1e2f, #232334);
-      padding: 20px;
-      border-radius: 8px;
-      border: 2px solid #0fa;
-      box-shadow: 0 0 20px rgba(0, 255, 170, 0.2);
-      overflow-y: auto;
-      height: calc(100vh - 40px);
-    }
-
-    .game-strip {
-      display: flex;
-      align-items: center;
-      background: linear-gradient(145deg, #232334, #2c2c44);
-      border: 2px solid #ff006e;
-      margin: 15px 0;
-      padding: 15px;
-      border-radius: 8px;
-      transition: all 0.3s ease-in-out;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .game-strip::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(
-        45deg,
-        transparent,
-        rgba(255, 255, 255, 0.1),
-        transparent
-      );
-      transform: rotate(45deg);
-      transition: 0.5s;
-    }
-
-    .game-strip:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 5px 15px rgba(255, 0, 110, 0.3);
-    }
-
-    .game-strip:hover::before {
-      left: 100%;
-    }
-
-    .game-image {
-      flex: 0 0 120px;
-      height: 80px;
-      border-radius: 4px;
-      overflow: hidden;
-      margin-right: 15px;
-      border: 2px solid #0fa;
-      box-shadow: 0 0 10px rgba(0, 255, 170, 0.3);
-    }
-
-    .game-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.3s ease;
-    }
-
-    .game-strip:hover .game-image img {
-      transform: scale(1.1);
-    }
-
-    .game-info {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .game-title {
-      font-size: 1rem;
-      color: #ff006e;
-      margin: 0;
-      text-shadow: 0 0 5px rgba(255, 0, 110, 0.5);
-      transition: text-shadow 0.3s ease;
-    }
-
-    .game-strip:hover .game-title {
-      text-shadow: 0 0 10px rgba(255, 0, 110, 0.8);
-    }
-
-    .game-price {
-      font-size: 0.9rem;
-      color: #0fa;
-      text-shadow: 0 0 5px rgba(0, 255, 170, 0.5);
-      margin-top: 8px;
-    }
-
-    .game-link {
-      text-decoration: none;
-      color: #fff;
-    }
-
-    .sidebar a {
-      text-decoration: none;
-      color: #0fa;
-      transition: all 0.3s ease;
-      display: block;
-      margin: 10px 0;
-    }
-
-    .sidebar a:hover {
-      color: #ff006e;
-      text-shadow: 0 0 5px rgba(255, 0, 110, 0.5);
-      transform: translateX(5px);
-    }
-
-    /* Scrollbar styling */
+    /* Scrollbar Styling */
     .main-content::-webkit-scrollbar {
       width: 8px;
     }
@@ -212,30 +207,7 @@
       border-radius: 4px;
       box-shadow: 0 0 5px rgba(255, 0, 110, 0.5);
     }
-
-    /* Subtle scanline effect */
-    body::after {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(
-        rgba(18, 16, 16, 0) 50%,
-        rgba(0, 0, 0, 0.15) 50%
-      );
-      background-size: 100% 4px;
-      z-index: 1000;
-      pointer-events: none;
-      opacity: 0.1;
-
-
-    
-    }
-
-
-  </style> 
+  </style>
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark">
@@ -317,7 +289,9 @@
         </div>
     </div>
 </nav>
- <div class="container">
+
+
+  <div class="container">
     <!-- Left Sidebar -->
     <div class="sidebar">
       <h2>Filter by:</h2>
@@ -325,41 +299,51 @@
         <input type="checkbox" name="category" value="action"> Action
       </label>
       <label>
-        <input type="checkbox" name="category" value="adventure"> Adventure
+        <input type="checkbox" name="category" value="adventure">Rpg
       </label>
       <label>
-        <input type="checkbox" name="category" value="indie"> Indie
+        <input type="checkbox" name="category" value="Sports"> Sports
       </label>
       <label>
-        <input type="checkbox" name="category" value="casual"> Casual
+        <input type="checkbox" name="category" value="Strategy"> Strategy
+      </label>
+      <label>
+        <input type="checkbox" name="category" value="Racing">Racing
+      </label>      <label>
+        <input type="checkbox" name="category" value="Horror"> Horror
       </label>
 
       <h2>Sort by:</h2>
       <label>
-        <input type="radio" name="sort" value="price"> Price
+        <input type="radio" name="sort" value="price">Price
       </label>
       <label>
-        <input type="radio" name="sort" value="popularity"> Popularity
+        <input type="radio" name="sort" value="popularity">Popularity
       </label>
     </div>
 
     <!-- Main Content -->
     <div class="main-content">
-      {% for game in games %}
-      <div class="game-strip">
-        <div class="game-image">
-          <img src="{{ game.image_url }}" alt="{{ game.name }}">
-        </div>
-        <div class="game-info">
-          <a href="{% url 'game_detail' game.id %}" class="game-link">
+      <div class="game-grid">
+        {% for game in games %}
+        <div class="game-card">
+          <div class="game-image">
+            <img src="{{ game.image_url }}" alt="{{ game.name }}">
+            <span class="game-badge">New</span>
+          </div>
+          <div class="game-info">
             <h3 class="game-title">{{ game.name }}</h3>
-          </a>
-          <p class="game-price">${{ game.price }}</p>
+            <p class="game-price">${{ game.price }}</p>
+            <div class="game-actions">
+              <button>Add to Cart</button>
+              <button>Wishlist</button>
+            </div>
+          </div>
         </div>
+        {% empty %}
+        <p>No games found.</p>
+        {% endfor %}
       </div>
-      {% empty %}
-      <p>No games found.</p>
-      {% endfor %}
     </div>
 
     <!-- Right Sidebar -->
@@ -373,7 +357,8 @@
     </div>
   </div>
 
-  <footer class="bg-dark text-light py-4" style="font-family: 'Press Start 2P', cursive;">
+   <!-- Footer (same as other pages) -->
+   <footer class="bg-dark text-light py-4" style="font-family: 'Press Start 2P', cursive;">
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-4">
@@ -398,6 +383,7 @@
         </div>
     </div>
 </footer>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
