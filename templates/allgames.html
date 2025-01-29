@@ -194,7 +194,7 @@
                 <li class="nav-item">
                     <a class="nav-link {% if request.path == '/games/' %}active{% endif %}" href="{% url 'all_games' %}">Games</a>
                 </li>
-                <li class="nav-item dropdown">
+                {% comment %} <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle {% if request.path == '/categories/' %}active{% endif %}" 
                      href="#" 
                      id="categoriesDropdown" 
@@ -211,7 +211,41 @@
                       <li><a class="dropdown-item" href="#"><i class="fas fa-car me-2"></i>Racing</a></li>
                       <li><a class="dropdown-item" href="#"><i class="fas fa-ghost me-2"></i>Horror</a></li>
                   </ul>
-              </li>
+              </li> {% endcomment %}
+
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle {% if request.path == '/categories/' %}active{% endif %}" 
+       href="#" 
+       id="categoriesDropdown" 
+       role="button" 
+       data-bs-toggle="dropdown" 
+       aria-expanded="false">
+        Categories
+    </a>
+    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="categoriesDropdown">
+        {% for category_code, category_name in CATEGORY_CHOICES %}
+        <li>
+            <a class="dropdown-item" href="{% url 'all_games' %}?category={{ category_code }}">
+                {% if category_code == 'ACTION' %}
+                    <i class="fas fa-gamepad me-2"></i>
+                {% elif category_code == 'RPG' %}
+                    <i class="fas fa-dragon me-2"></i>
+                {% elif category_code == 'SPORTS' %}
+                    <i class="fas fa-football-ball me-2"></i>
+                {% elif category_code == 'STRATEGY' %}
+                    <i class="fas fa-chess me-2"></i>
+                {% elif category_code == 'RACING' %}
+                    <i class="fas fa-car me-2"></i>
+                {% elif category_code == 'HORROR' %}
+                    <i class="fas fa-ghost me-2"></i>
+                {% endif %}
+                {{ category_name }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</li>
+
                 <li class="nav-item">
                     <a class="nav-link {% if request.path == '/deals/' %}active{% endif %}" href="#">Deals</a>
                 </li>
@@ -259,7 +293,7 @@
     <!-- Main Content -->
     <div class="container main-container">
       <!-- Filters Sidebar -->
-      <aside class="filters-sidebar">
+      {% comment %} <aside class="filters-sidebar">
           <div class="filter-group">
               <h2>Categories</h2>
               {% for category, name in categories %}
@@ -283,17 +317,65 @@
               </label>
           </div>
 
-          <div class="filter-group">
-              <h2>Sections</h2>
-              {% for section, name in sections %}
-              <label class="filter-option">
-                  <input type="checkbox" name="section" value="{{ section }}"
-                         {% if section in selected_sections %}checked{% endif %}>
-                  {{ name }}
-              </label>
-              {% endfor %}
-          </div>
-      </aside>
+
+      </aside> {% endcomment %}
+
+      <!-- Replace the existing filters sidebar with this -->
+<aside class="filters-sidebar">
+  <form id="filterForm" method="GET" action="{% url 'all_games' %}">
+      <div class="filter-group">
+          <h2>Categories</h2>
+          {% for category_code, category_name in CATEGORY_CHOICES %}
+          <label class="filter-option">
+              <input type="checkbox" name="category" value="{{ category_code }}"
+                  {% if category_code in selected_categories %}checked{% endif %}
+                  onchange="document.getElementById('filterForm').submit()">
+              {{ category_name }}
+          </label>
+          {% endfor %}
+      </div>
+
+      <div class="filter-group">
+          <h2>Sort By</h2>
+          <label class="filter-option">
+              <input type="radio" name="sort" value="price_low"
+                  {% if sort_by == 'price_low' %}checked{% endif %}
+                  onchange="document.getElementById('filterForm').submit()">
+              Price (Low to High)
+          </label>
+          <label class="filter-option">
+              <input type="radio" name="sort" value="price_high"
+                  {% if sort_by == 'price_high' %}checked{% endif %}
+                  onchange="document.getElementById('filterForm').submit()">
+              Price (High to Low)
+          </label>
+          <label class="filter-option">
+              <input type="radio" name="sort" value="popularity"
+                  {% if sort_by == 'popularity' %}checked{% endif %}
+                  onchange="document.getElementById('filterForm').submit()">
+              Most Popular
+          </label>
+          <label class="filter-option">
+              <input type="radio" name="sort" value="rating"
+                  {% if sort_by == 'rating' %}checked{% endif %}
+                  onchange="document.getElementById('filterForm').submit()">
+              Highest Rated
+          </label>
+          <label class="filter-option">
+              <input type="radio" name="sort" value="newest"
+                  {% if sort_by == 'newest' %}checked{% endif %}
+                  onchange="document.getElementById('filterForm').submit()">
+              Newest First
+          </label>
+      </div>
+
+      {% if selected_categories or selected_sections or sort_by %}
+      <div class="filter-group">
+          <a href="{% url 'all_games' %}" class="btn btn-danger btn-sm">Clear All Filters</a>
+      </div>
+      {% endif %}
+  </form>
+</aside>
 
       <!-- Game Grid -->
       <main class="game-grid">
@@ -301,7 +383,9 @@
               {% for game in games %}
               <div class="game-card">
                   <div class="game-image">
+                    <a href="{% url 'game_detail' game.id %}">
                       <img src="{{ game.image_url }}" alt="{{ game.name }}">
+                    </a>
                       {% if game.section == 'new' %}
                           <span class="game-badge">NEW</span>
                       {% elif game.discount %}
@@ -330,10 +414,20 @@
                           {% endif %}
                       </p>
                       <div class="game-actions">
+
+
+                          {% if user.is_authenticated %}
                           <form method="post" action="{% url 'add_to_cart' game.id %}">
                               {% csrf_token %}
                               <button type="submit" class="btn-game">Add to Cart</button>
                           </form>
+                      {% else %}
+                          <a href="{% url 'login' %}?next={{ request.path }}">
+                              <button type="submit" class="btn-game">Add to Cart
+                              </button>
+                          </a>
+                      {% endif %} 
+
                           <button class="btn-game">Wishlist</button>
                       </div>
                   </div>

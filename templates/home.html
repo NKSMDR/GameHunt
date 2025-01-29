@@ -38,7 +38,7 @@
                   <li class="nav-item">
                       <a class="nav-link {% if request.path == '/games/' %}active{% endif %}" href="{% url 'all_games' %}">Games</a>
                   </li>
-                  <li class="nav-item dropdown">
+                  {% comment %} <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle {% if request.path == '/categories/' %}active{% endif %}" 
                        href="#" 
                        id="categoriesDropdown" 
@@ -55,22 +55,125 @@
                         <li><a class="dropdown-item" href="#"><i class="fas fa-car me-2"></i>Racing</a></li>
                         <li><a class="dropdown-item" href="#"><i class="fas fa-ghost me-2"></i>Horror</a></li>
                     </ul>
-                </li>
+                </li> {% endcomment %}
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle {% if request.path == '/categories/' %}active{% endif %}" 
+                     href="#" 
+                     id="categoriesDropdown" 
+                     role="button" 
+                     data-bs-toggle="dropdown" 
+                     aria-expanded="false">
+                      Categories
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="categoriesDropdown">
+                      {% for category_code, category_name in CATEGORY_CHOICES %}
+                      <li>
+                          <a class="dropdown-item" href="{% url 'all_games' %}?category={{ category_code }}">
+                              {% if category_code == 'ACTION' %}
+                                  <i class="fas fa-gamepad me-2"></i>
+                              {% elif category_code == 'RPG' %}
+                                  <i class="fas fa-dragon me-2"></i>
+                              {% elif category_code == 'SPORTS' %}
+                                  <i class="fas fa-football-ball me-2"></i>
+                              {% elif category_code == 'STRATEGY' %}
+                                  <i class="fas fa-chess me-2"></i>
+                              {% elif category_code == 'RACING' %}
+                                  <i class="fas fa-car me-2"></i>
+                              {% elif category_code == 'HORROR' %}
+                                  <i class="fas fa-ghost me-2"></i>
+                              {% endif %}
+                              {{ category_name }}
+                          </a>
+                      </li>
+                      {% endfor %}
+                  </ul>
+              </li>
+
                   <li class="nav-item">
                       <a class="nav-link {% if request.path == '/deals/' %}active{% endif %}" href="#">Deals</a>
                   </li>
               </ul>
           </div>
-          
-              <form class="d-flex me-3">
-                  <input class="form-control me-2" type="search" placeholder="Search games...">
-                  <button class="btn btn-outline-light" type="submit">
-                      <i class="fas fa-search"></i>
-                  </button>
-              </form>
-              <a href="{% url 'cart' %}" class="btn btn-outline-light me-2"
-              ><i class="fas fa-shopping-cart"></i
-            ></a>
+
+
+          {% comment %} search functionality {% endcomment %}
+          <form class="d-flex me-3" action="{% url 'all_games' %}" method="GET" onsubmit="return validateSearch()">
+            <div class="position-relative w-100">
+                <input 
+                    class="form-control me-2" 
+                    type="search" 
+                    name="search" 
+                    id="searchInput"
+                    placeholder="Search games..." 
+                    {% if search_query %}value="{{ search_query }}"{% endif %}
+                    autocomplete="off"
+                    oninput="showSuggestions(this.value)">
+                <div id="searchSuggestions" class="position-absolute w-100 bg-dark" style="top: 100%; z-index: 1000; display: none;"></div>
+            </div>
+            <button class="btn btn-outline-light" type="submit">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+        
+        <style>
+          .suggestion-item:hover {
+            background-color: #2c3e50;
+            cursor: pointer;
+        }
+        </style>
+
+        <script>
+        function validateSearch() {
+            const searchValue = document.getElementById('searchInput').value.trim();
+            return searchValue !== '';
+        }
+        
+        function showSuggestions(query) {
+            if (!query) {
+                document.getElementById('searchSuggestions').style.display = 'none';
+                return;
+            }
+        
+            fetch(`/api/search-suggestions/?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const suggestionDiv = document.getElementById('searchSuggestions');
+                    if (data.length > 0) {
+                        suggestionDiv.innerHTML = data.map(game => `
+                            <div class="p-2 text-light border-bottom suggestion-item" onclick="selectSuggestion('${game.name}')">
+                                ${game.name}
+                            </div>
+                        `).join('');
+                        suggestionDiv.style.display = 'block';
+                    } else {
+                        suggestionDiv.style.display = 'none';
+                    }
+                });
+        }
+        
+        function selectSuggestion(name) {
+            document.getElementById('searchInput').value = name;
+            document.getElementById('searchSuggestions').style.display = 'none';
+        }
+        
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#searchInput')) {
+                document.getElementById('searchSuggestions').style.display = 'none';
+            }
+        });
+        </script>
+
+{% comment %} end of search {% endcomment %}
+
+              {% if user.is_authenticated %}
+              <a href="{% url 'cart' %}" class="btn btn-outline-light me-2">
+                  <i class="fas fa-shopping-cart"></i>
+              </a>
+          {% else %}
+              <a href="{% url 'login' %}?next={% url 'cart' %}" class="btn btn-outline-light me-2">
+                  <i class="fas fa-shopping-cart"></i>
+              </a>
+          {% endif %}
               <div class="d-flex">
                   {% if user.is_authenticated %}
                   <!-- Dropdown for logged-in users -->
@@ -105,7 +208,8 @@
       <div class="container text-center">
         <h1 class="display-4">Welcome to GAMEXHUNT</h1>
         <p class="lead">Discover the latest and greatest games</p>
-        <a href="#" class="btn btn-primary btn-lg">Browse Games</a>
+        <a class="btn btn-primary btn-lg {% if request.path == '/games/' %}active{% endif %}" href="{% url 'all_games' %}">Browse Games</a>
+       
       </div>
     </section>
 
@@ -180,7 +284,7 @@
   </div>
 </section>
 
-    <!-- Categories Section -->
+    <!-- Browse By Category Section -->
     <section class="py-5 bg-light">
       <div class="container">
         <h2 class="text-center mb-4" style="color: black">
@@ -188,62 +292,68 @@
         </h2>
         <div class="row g-4">
           <div class="col-md-2">
-            <div
-              class="card text-center hover-effect"
-              aria-label="Browse Action Games"
-            >
+            <a href="{% url 'all_games' %}?category=ACTION" class="text-decoration-none">
+            <div class="card text-center hover-effect"aria-label="Browse Action Games">
               <div class="card-body hover-effect">
                 <i class="fas fa-gamepad fa-2x mb-3"></i>
                 <h6>Action</h6>
               </div>
             </div>
+            </a>
           </div>
           <div class="col-md-2">
-            <div
-              class="card text-center hover-effect"
-              aria-label="Browse Action Games"
-            >
+            <a href="{% url 'all_games' %}?category=RPG" class="text-decoration-none">
+              <div class="card text-center hover-effect" aria-label="Browse Action Games">
               <div class="card-body hover-effect">
                 <i class="fas fa-dragon fa-2x mb-3"></i>
                 <h6>RPG</h6>
               </div>
             </div>
+          </a>
           </div>
           <div class="col-md-2">
+            <a href="{% url 'all_games' %}?category=SPORTS" class="text-decoration-none">
             <div class="card text-center hover-effect">
               <div class="card-body hover-effect">
                 <i class="fas fa-football-ball fa-2x mb-3"></i>
                 <h6>Sports</h6>
               </div>
             </div>
+          </a>
           </div>
           <div class="col-md-2">
+            <a href="{% url 'all_games' %}?category=STRATEGY" class="text-decoration-none">
             <div class="card text-center hover-effect">
               <div class="card-body hover-effect">
                 <i class="fas fa-chess fa-2x mb-3"></i>
                 <h6>Strategy</h6>
               </div>
             </div>
+          </a>
           </div>
           <div class="col-md-2">
+            <a href="{% url 'all_games' %}?category=RACING" class="text-decoration-none">
             <div class="card text-center hover-effect">
               <div class="card-body hover-effect">
                 <i class="fas fa-car fa-2x mb-3"></i>
                 <h6>Racing</h6>
               </div>
             </div>
+          </a>
           </div>
           <div class="col-md-2">
+            <a href="{% url 'all_games' %}?category=HORROR" class="text-decoration-none">
             <div class="card text-center hover-effect">
               <div class="card-body hover-effect">
                 <i class="fas fa-ghost fa-2x mb-3"></i>
                 <h6>Horror</h6>
               </div>
             </div>
+            </a>
           </div>
         </div>
       </div>
-      <!-- Add this right before the closing </section> tag of the Categories Section -->
+      
 <style>
   .hover-effect {
     transition: all 0.3s ease;

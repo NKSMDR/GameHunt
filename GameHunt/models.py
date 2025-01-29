@@ -112,21 +112,30 @@ class GameImage(models.Model):
 
 
 from django.contrib.auth.models import User
+
 class Cart(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="cart")
 
     def __str__(self):
         return f"Cart({self.user.username})"
+
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="items")
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    
+
+    class Meta:
+        # Add this to prevent duplicate games in cart
+        unique_together = ('cart', 'game')
+        # Add index for better performance
+        indexes = [
+            models.Index(fields=['cart', 'game']),
+        ]
 
     def get_total_price(self):
-        return self.game.price * self.quantity
-    
+        return self.game.price
+
     def __str__(self):
-        return f"{self.game.name} (x{self.quantity})"
+        return f"{self.game.name}"
 class Purchase(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="purchases")
     game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name="purchases")

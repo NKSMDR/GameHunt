@@ -63,6 +63,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'GameHunt.context_processors.category_choices',
             ],
         },
     },
@@ -137,3 +138,4 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 
 LOGIN_REDIRECT_URL = 'home'  # Redirect to 'home' after login
+

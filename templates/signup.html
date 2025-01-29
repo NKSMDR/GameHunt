@@ -22,8 +22,18 @@
             <div class="col-md-6">
                 <div class="form-container">
                     <h1 class="form-title">Create Account</h1>
-                    <form method="post" action="{% url 'signup' %}">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %} text-center mb-4">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    <form method="post" action="{% url 'signup' %}{% if next %}?next={{ next }}{% endif %}">
                         {% csrf_token %}
+                        {% if next %}
+                            <input type="hidden" name="next" value="{{ next }}">
+                        {% endif %}
                         <div class="mb-3">
                             <input type="text" class="form-control" name="username" placeholder="USERNAME" required>
                         </div>
@@ -37,7 +47,7 @@
                     </form>
                     <div class="text-center mt-3">
                         <span>Already have an account?</span>
-                        <a href="{% url 'login' %}" class="text-success">Login</a>
+                        <a href="{% url 'login' %}{% if next %}?next={{ next }}{% endif %}" class="text-success">Login</a>
                     </div>
                 </div>
             </div>
