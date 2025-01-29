@@ -1,0 +1,12 @@
+<div class="container py-5">
+    <h1 class="section-title text-center mb-5">Your Purchased Games</h1>
+    <ul class="list-group">
+        {% for purchase in purchases %}
+        <li class="list-group-item">
+            <strong>{{ purchase.game.name }}</strong> - Purchased on {{ purchase.purchased_at|date:"F j, Y" }}
+        </li>
+        {% empty %}
+        <li class="list-group-item">You haven't purchased any games yet.</li>
+        {% endfor %}
+    </ul>
+</div>

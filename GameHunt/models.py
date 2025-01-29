@@ -108,3 +108,29 @@ class GameImage(models.Model):
         if self.is_cover:
             GameImage.objects.filter(game=self.game, is_cover=True).update(is_cover=False)
         super().save(*args, **kwargs)
+
+
+
+from django.contrib.auth.models import User
+class Cart(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="cart")
+
+    def __str__(self):
+        return f"Cart({self.user.username})"
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="items")
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    
+
+    def get_total_price(self):
+        return self.game.price * self.quantity
+    
+    def __str__(self):
+        return f"{self.game.name} (x{self.quantity})"
+class Purchase(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="purchases")
+    game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name="purchases")
+    purchased_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.game.name}"

@@ -68,7 +68,6 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-              <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">Home</a>
@@ -83,28 +82,31 @@
                         <a class="nav-link {% if request.path == '/deals/' %}active{% endif %}" href="#">Deals</a>
                     </li>
                 </ul>
-            </div>
-            
+                
                 <form class="d-flex me-3">
                     <input class="form-control me-2" type="search" placeholder="Search games...">
                     <button class="btn btn-outline-light" type="submit">
                         <i class="fas fa-search"></i>
                     </button>
                 </form>
-                <a href="{% url 'cart' %}" class="btn btn-outline-light me-2"
-                ><i class="fas fa-shopping-cart"></i
-              ></a>
+                <a href="{% url 'cart' %}" class="btn btn-outline-light me-2 position-relative">
+                    <i class="fas fa-shopping-cart"></i>
+                    {% if cart_count > 0 %}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {{ cart_count }}
+                    </span>
+                    {% endif %}
+                </a>
                 <div class="d-flex">
                     {% if user.is_authenticated %}
-                    <!-- Dropdown for logged-in users -->
                     <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="btn btn-primary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
                             <i class="fas fa-user-circle fa-lg"></i> 
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="#">Account Details</a></li>
                             <li><a class="dropdown-item" href="#">Orders</a></li>
-                            <li><a class="dropdown" href="#"></a>Library</li>
+                            <li><a class="dropdown-item" href="#">Library</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form method="post" action="{% url 'logout' %}">
@@ -115,7 +117,6 @@
                         </ul>
                     </div>
                     {% else %}
-                    <!-- Login button for guests -->
                     <a href="{% url 'login' %}" class="btn btn-primary"><i class="fas fa-user-circle fa-lg"></i> </a>
                     {% endif %}
                 </div>
@@ -128,54 +129,34 @@
 
         <div class="row">
             <div class="col-md-8">
-                <!-- Cart Items -->
+                {% for item in cart_items %}
                 <div class="cart-item d-flex align-items-center p-3">
-                    <img src="/static/GameImages/game1.jpg" alt="Game 1" class="me-3">
+                    <img src="{{ item.game.image_url }}" alt="{{ item.game.name }}" class="me-3" style="max-width: 100px;">
                     <div class="flex-grow-1">
-                        <h5>Cyberpunk 2077</h5>
-                        <p class="text-muted">Action RPG</p>
-                        <span class="game-price">$39.99</span>
+                        <h5>{{ item.game.name }}</h5>
+                        <p class="text-muted">{{ item.game.get_category_display }}</p>
+                        <span class="game-price">${{ item.game.price }}</span>
                     </div>
-                    <div class="cart-actions">
-                        <button class="btn btn-sm btn-outline-light me-2"><i class="fas fa-minus"></i></button>
-                        <span>1</span>
-                        <button class="btn btn-sm btn-outline-light ms-2"><i class="fas fa-plus"></i></button>
-                        <button class="btn btn-sm btn-danger ms-3"><i class="fas fa-trash"></i></button>
-                    </div>
+                    <form method="post" action="{% url 'remove_from_cart' item.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger ms-3">
+                            <i class="fas fa-trash"></i> Remove
+                        </button>
+                    </form>
                 </div>
-
-                <div class="cart-item d-flex align-items-center p-3">
-                    <img src="/static/GameImages/game2.jpg" alt="Game 2" class="me-3">
-                    <div class="flex-grow-1">
-                        <h5>Elden Ring</h5>
-                        <p class="text-muted">Action RPG</p>
-                        <span class="game-price">$59.99</span>
-                    </div>
-                    <div class="cart-actions">
-                        <button class="btn btn-sm btn-outline-light me-2"><i class="fas fa-minus"></i></button>
-                        <span>1</span>
-                        <button class="btn btn-sm btn-outline-light ms-2"><i class="fas fa-plus"></i></button>
-                        <button class="btn btn-sm btn-danger ms-3"><i class="fas fa-trash"></i></button>
-                    </div>
-                </div>
+                {% empty %}
+                <div class="alert alert-info">Your cart is empty</div>
+                {% endfor %}
+                
             </div>
 
             <div class="col-md-4">
                 <div class="card bg-dark text-light">
                     <div class="card-body">
                         <h4 class="section-title text-center mb-4">Order Summary</h4>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Subtotal</span>
-                            <span>$99.98</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Tax</span>
-                            <span>$8.00</span>
-                        </div>
-                        <hr>
                         <div class="d-flex justify-content-between mb-3">
                             <strong>Total</strong>
-                            <strong>$107.98</strong>
+                            <strong>${{ total|floatformat:2 }}</strong>
                         </div>
                         <button class="btn btn-checkout btn-lg w-100">
                             <i class="fas fa-credit-card me-2"></i>Proceed to Checkout
@@ -186,7 +167,6 @@
         </div>
     </div>
 
-    <!-- Footer (same as other pages) -->
     <footer class="bg-dark text-light py-4" style="font-family: 'Press Start 2P', cursive;">
         <div class="container-fluid">
             <div class="row">

@@ -9,11 +9,17 @@ from django.contrib.auth.views import LogoutView
 urlpatterns = [
     path('', views.home, name='home'),  # Changed from game_list to home to match your template
     path('game/<int:game_id>/', views.game_detail, name='game_detail'),  # New URL pattern for game details
-    path('cart/', views.cart_view, name='cart'),
     path('login/', login_view, name='login'),
     path('signup/', signup_view, name='signup'),
     path('logout/', LogoutView.as_view(next_page='/'), name='logout'),
     path('games/', views.all_games, name='all_games'),
+    path('add-to-cart/<int:game_id>/', views.add_to_cart, name='add_to_cart'),
+    path('cart/', views.cart_view, name='cart'),
+    path('remove-from-cart/<int:item_id>/', views.remove_from_cart, name='remove_from_cart'),
+    path('purchases/', views.purchased_games, name='purchased_games'),
+    path('about/', views.about, name='about'),
+    path('contact/', views.contact, name='contact'),
+
 ]
 
 

@@ -219,3 +219,14 @@ class CustomUserAdmin(UserAdmin):
     list_display = ('username', 'is_staff', 'is_active')
     exclude = ('password', 'last_login')
     readonly_fields = ('date_joined',)
+
+from django.contrib import admin
+from .models import Game, Cart, CartItem
+
+@admin.register(Cart)
+class CartAdmin(admin.ModelAdmin):
+    list_display = ("user",)
+
+@admin.register(CartItem)
+class CartItemAdmin(admin.ModelAdmin):
+    list_display = ("cart", "game")

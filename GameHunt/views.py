@@ -78,3 +78,107 @@ def signup_view(request):
 def all_games(request):
     games = Game.objects.all()
     return render(request, 'allgames.html', {'games': games})
+
+from .models import Cart, CartItem, Game,Purchase
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.db import IntegrityError
+
+@login_required
+def cart_view(request):
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    total = sum(item.game.price for item in cart.items.all())
+    return render(request, "cartpage.html", {
+        "cart_items": cart.items.all(),
+        "total": total,
+        "cart_count": cart.items.count(),
+    })
+
+def user_has_purchased_game(user, game):
+    return Purchase.objects.filter(user=user, game=game).exists()
+
+@login_required
+def add_to_cart(request, game_id):
+    game = get_object_or_404(Game, id=game_id)
+    cart, created = Cart.objects.get_or_create(user=request.user)
+
+    # Check if the game is already purchased
+    if user_has_purchased_game(request.user, game):  # Implement this function as needed
+        messages.error(request, f"You already own {game.name}.")
+        return redirect("cart")
+
+    # Check if the game is already in the cart
+    try:
+        CartItem.objects.create(cart=cart, game=game)
+    except IntegrityError:
+        # The game is already in the cart; optionally display a message
+        from django.contrib import messages
+        messages.info(request, f"{game.name} is already in your cart.")
+    
+    return redirect("cart")
+
+
+@login_required
+def remove_from_cart(request, item_id):
+    item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+    item.delete()
+    return redirect("cart")
+
+
+@login_required
+def purchased_games(request):
+    purchases = Purchase.objects.filter(user=request.user)
+    return render(request, "purchased_games.html", {"purchases": purchases})
+
+#for all games
+from django.shortcuts import render
+from django.db.models import Q
+from .models import Game
+
+def all_games(request):
+    # Get filter parameters from request
+    category = request.GET.getlist('category')
+    section = request.GET.getlist('section')
+    sort_by = request.GET.get('sort')
+    search_query = request.GET.get('search')
+
+    # Start with all games
+    games = Game.objects.all()
+
+    # Apply filters
+    if category:
+        games = games.filter(category__in=category)
+    if section:
+        games = games.filter(section__in=section)
+    if search_query:
+        games = games.filter(
+            Q(name__icontains=search_query) |
+            Q(description__icontains=search_query)
+        )
+
+    # Apply sorting
+    if sort_by == 'price':
+        games = games.order_by('price')
+    elif sort_by == 'popularity':
+        games = games.order_by('-reviews_count')
+    elif sort_by == 'rating':
+        games = games.order_by('-rating')
+    else:
+        games = games.order_by('-release_date')  # Default sorting
+
+    # Prepare context
+    context = {
+        'games': games,
+        'categories': Game.CATEGORY_CHOICES,
+        'sections': Game.SECTION_CHOICE,
+        'selected_categories': category,
+        'selected_sections': section,
+        'sort_by': sort_by,
+    }
+
+    return render(request, 'allgames.html', context)
+def about(request):
+    return render(request, 'about.html')
+
+def contact(request):
+    return render(request, 'contact.html')
