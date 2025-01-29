@@ -80,6 +80,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 1.5rem;
+      align-items: start;
     }
 
     .game-card {
@@ -88,6 +89,9 @@
       overflow: hidden;
       transition: transform 0.3s ease;
       border: 1px solid var(--primary-color);
+      height: fit-content; /* Prevents stretching */
+      display: flex;
+      flex-direction: column;
     }
 
     .game-card:hover {
@@ -118,6 +122,9 @@
 
     .game-info {
       padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      height: auto; /* Ensures content determines height */
     }
 
     .game-title {
@@ -136,6 +143,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 0.5rem;
+      margin-top: auto; /* Pushes actions to bottom while maintaining natural height */
     }
 
     .btn-game {
